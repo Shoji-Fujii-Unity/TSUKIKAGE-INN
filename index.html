@@ -1,0 +1,1447 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>丑三つの宿 月影亭怪談 | TSUKIKAGE INN — Ghost Hour Escape</title>
+<style>
+:root{
+  --gold:#e0b64b; --red:#c3403a; --ink:#0a0d18; --panel:rgba(9,12,22,.88);
+  --line:#3a4160; --txt:#e6e4d8;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;height:100%;background:#05070f;overflow:hidden;
+  font-family:"Yu Mincho","YuMincho","Hiragino Mincho ProN","Noto Serif JP","MS Mincho",serif;color:var(--txt)}
+#wrap{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:
+  radial-gradient(1200px 700px at 50% 30%, #10182c 0%, #05070f 70%)}
+#stage{position:relative;background:#000;box-shadow:0 0 60px rgba(0,0,0,.9),0 0 0 1px #262e4a;border-radius:6px;overflow:hidden}
+#view{position:absolute;left:0;top:0;width:100%;display:block;background:#0b0f1c}
+/* ---------- hotspots ---------- */
+.hs{fill:rgba(0,0,0,0);cursor:pointer}
+.hs:hover{}
+.hs:focus{outline:none}
+.pulse{fill:none;stroke:#efe2b4;stroke-width:2;opacity:.0;animation:pulse 2.6s ease-in-out infinite;pointer-events:none;transform-box:fill-box;transform-origin:center}
+@keyframes pulse{0%{transform:scale(.55);opacity:0}35%{opacity:.75}70%{opacity:.5}100%{transform:scale(1.25);opacity:0}}
+.navp{animation:navp 1.8s ease-in-out infinite;pointer-events:none}
+@keyframes navp{0%,100%{opacity:.35}50%{opacity:.95}}
+.flame{transform-box:fill-box;transform-origin:50% 90%;animation:fl 1.3s ease-in-out infinite}
+@keyframes fl{0%,100%{transform:scaleY(1) scaleX(1);opacity:.95}40%{transform:scaleY(1.12) scaleX(.92);opacity:1}70%{transform:scaleY(.94) scaleX(1.05);opacity:.85}}
+.fog{transform-box:fill-box;animation:fogm 26s ease-in-out infinite alternate}
+.fog.b{animation-duration:34s;animation-direction:alternate-reverse}
+@keyframes fogm{from{transform:translateX(-60px)}to{transform:translateX(70px)}}
+.sn{transform-box:fill-box;animation:snf linear infinite}
+@keyframes snf{from{transform:translateY(-40px)}to{transform:translateY(780px)}}
+.sway{transform-box:fill-box;transform-origin:center top;animation:sway 5s ease-in-out infinite}
+@keyframes sway{0%,100%{transform:rotate(-2.5deg)}50%{transform:rotate(2.5deg)}}
+.bob{transform-box:fill-box;animation:bob 3.4s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.mist{animation:mist 7s ease-in-out infinite}
+@keyframes mist{0%,100%{opacity:.14}50%{opacity:.30}}
+.shakew{animation:shk 0.35s linear 3}
+@keyframes shk{0%,100%{transform:translate(0,0)}25%{transform:translate(-5px,3px)}75%{transform:translate(5px,-3px)}}
+/* ---------- UI ---------- */
+#topbar{position:absolute;right:10px;top:10px;display:flex;gap:8px;z-index:30}
+#topbar button{width:46px;height:40px;font-size:19px;border-radius:9px;border:1px solid var(--line);
+  background:var(--panel);color:var(--txt);cursor:pointer;backdrop-filter:blur(3px)}
+#topbar button:active{background:#232c47}
+#topbar #bLang{width:auto;padding:0 10px;font-size:14px;font-family:inherit}
+#scname{position:absolute;left:14px;top:12px;z-index:30;font-size:17px;letter-spacing:3px;color:#cfc9b4;
+  background:rgba(5,7,14,.55);padding:5px 14px;border:1px solid #2c3352;border-radius:4px;pointer-events:none}
+#tip{position:absolute;z-index:40;pointer-events:none;background:rgba(8,10,20,.92);border:1px solid var(--line);
+  padding:5px 12px;border-radius:6px;font-size:14px;color:#efe9d6;transform:translate(-50%,-130%);white-space:nowrap}
+#msg{position:absolute;left:50%;bottom:110px;transform:translateX(-50%);z-index:35;max-width:76%;
+  background:rgba(7,9,18,.92);border:1px solid #4a5170;border-left:4px solid var(--gold);
+  padding:10px 20px;border-radius:8px;font-size:16.5px;text-align:center;line-height:1.45;
+  color:#f0ecdd;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.6)}
+#inv{position:absolute;left:0;right:0;bottom:0;height:96px;background:linear-gradient(180deg,#0d1120,#070a14);
+  border-top:1px solid #2c3352;display:flex;align-items:center;gap:8px;padding:8px 12px;z-index:30;overflow-x:auto}
+#inv .slot{min-width:74px;width:74px;height:76px;border:1px solid #333c5e;border-radius:10px;background:#111728;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative}
+#inv .slot svg{width:44px;height:44px}
+#inv .slot .nm{font-size:10.5px;color:#b9b4a0;margin-top:1px;max-width:70px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+#inv .slot.sel{border-color:var(--gold);box-shadow:0 0 14px rgba(224,182,75,.55);background:#1a2138}
+#inv .tag{font-size:11px;color:#8a8570;writing-mode:vertical-rl;letter-spacing:2px;margin-right:2px}
+/* ---------- dialogue ---------- */
+#dlg{position:absolute;left:50%;bottom:120px;transform:translateX(-50%);z-index:60;width:min(88%,860px);
+  background:linear-gradient(180deg,rgba(12,15,28,.97),rgba(8,10,20,.97));border:1px solid #55451f;
+  border-top:3px solid var(--red);border-radius:10px;padding:14px 22px 12px;box-shadow:0 14px 40px rgba(0,0,0,.8)}
+#dlg .who{font-size:15px;color:var(--red);letter-spacing:2px;margin-bottom:6px}
+#dlg .txt{font-size:17.5px;line-height:1.55;min-height:52px;white-space:pre-wrap}
+#dlg .more{font-size:12px;color:#8f8a75;text-align:right}
+/* ---------- overlays ---------- */
+.ov{position:absolute;inset:0;z-index:80;background:rgba(4,6,12,.82);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
+.card{background:#0d1120;border:1px solid var(--line);border-top:3px solid var(--red);border-radius:12px;
+  padding:22px 26px;max-width:86%;max-height:88%;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.9);text-align:center}
+.card h2{margin:0 0 12px;font-size:22px;letter-spacing:3px;color:#efe6cc}
+.card p{font-size:15px;line-height:1.7;color:#c9c4b2;margin:8px 0}
+.btn{display:inline-block;margin:8px 6px 0;padding:10px 26px;font-size:16px;font-family:inherit;letter-spacing:2px;
+  color:#efe9d6;background:#1a2136;border:1px solid #4a5170;border-radius:8px;cursor:pointer}
+.btn:active{background:#2a3453}
+.btn.gold{border-color:var(--gold);color:var(--gold)}
+.hidden{display:none!important}
+#titleOv{background:radial-gradient(900px 600px at 62% 35%,#151d33 0%,#05070f 75%)}
+#titleOv .logo{margin:0}
+#rotOv{z-index:120;background:#05070f}
+#endOv{background:#05070f}
+input.pinput{width:78%;padding:10px;font-size:18px;font-family:inherit;background:#141a2c;border:1px solid var(--line);
+  border-radius:8px;color:#f0ecdd;text-align:center}
+.dialrow{display:flex;align-items:center;justify-content:center;gap:14px;margin:14px 0}
+.dial{width:76px;height:96px;background:#141a2c;border:1px solid #4a5170;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.dial .num{font-size:44px;color:var(--gold);font-weight:bold}
+.dial button{width:60px;height:26px;font-size:15px;background:#1a2136;color:#cfc9b4;border:1px solid #3a4160;border-radius:6px;cursor:pointer}
+#mapOv svg{width:min(92%,900px);height:auto}
+.small{font-size:12.5px;color:#8a8570}
+kbd{background:#1a2136;border:1px solid #3a4160;border-radius:4px;padding:1px 6px;font-size:12px}
+</style>
+</head>
+<body>
+<div id="wrap">
+ <div id="stage">
+  <svg id="view" viewBox="0 0 1280 720" xmlns="http://www.w3.org/2000/svg">
+   <defs>
+    <linearGradient id="gBack" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#232a44"/><stop offset="1" stop-color="#141a2c"/>
+    </linearGradient>
+    <linearGradient id="gFloor" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2b3048"/><stop offset="1" stop-color="#0c0f1b"/>
+    </linearGradient>
+    <linearGradient id="gSide" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0c0f1b"/><stop offset="1" stop-color="#1b2136"/>
+    </linearGradient>
+    <linearGradient id="gSideR" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#1b2136"/><stop offset="1" stop-color="#0c0f1b"/>
+    </linearGradient>
+    <linearGradient id="gMoon" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#dfe6f2" stop-opacity=".34"/><stop offset="1" stop-color="#dfe6f2" stop-opacity=".05"/>
+    </linearGradient>
+    <linearGradient id="gWood" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4a3626"/><stop offset="1" stop-color="#2a1e14"/>
+    </linearGradient>
+    <linearGradient id="gSnow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#cfd8e8"/><stop offset="1" stop-color="#8f9cb5"/>
+    </linearGradient>
+    <linearGradient id="gGhost" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e8ecf5" stop-opacity=".95"/><stop offset="1" stop-color="#9fb0cf" stop-opacity=".25"/>
+    </linearGradient>
+    <radialGradient id="gVig" cx=".5" cy=".42" r=".75">
+      <stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".55"/>
+    </radialGradient>
+    <radialGradient id="gLamp" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#ffd9a0" stop-opacity=".5"/><stop offset="1" stop-color="#ffd9a0" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="gMoonB" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#cfe0ff" stop-opacity=".55"/><stop offset=".5" stop-color="#9db8e8" stop-opacity=".18"/><stop offset="1" stop-color="#9db8e8" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="blurA" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="7"/></filter>
+    <filter id="blurB" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="16"/></filter>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="1.2"/></filter>
+    <pattern id="patShoji" width="76" height="64" patternUnits="userSpaceOnUse">
+      <rect width="76" height="64" fill="none"/>
+      <path d="M0 0H76M0 0V64" stroke="#48506e" stroke-width="3" opacity=".55"/>
+    </pattern>
+    <pattern id="patTatami" width="34" height="34" patternUnits="userSpaceOnUse">
+      <rect width="34" height="34" fill="#2e3549"/>
+      <path d="M0 8H34M0 17H34M0 26H34" stroke="#39415a" stroke-width="1.4"/>
+      <path d="M0 0V34" stroke="#232a3d" stroke-width="2"/>
+    </pattern>
+    <pattern id="patTile" width="58" height="58" patternUnits="userSpaceOnUse">
+      <rect width="58" height="58" fill="#233047"/>
+      <rect x="2" y="2" width="54" height="54" rx="3" fill="#2b3a55"/>
+    </pattern>
+   </defs>
+   <g id="art"></g>
+   <g id="hots"></g>
+  </svg>
+  <div id="scname"></div>
+  <div id="topbar">
+    <button id="bHint" title="hint">💡</button>
+    <button id="bMap" title="map">🗺</button>
+    <button id="bSave" title="save">💾</button>
+    <button id="bSnd" title="sound">🔊</button>
+    <button id="bLang">EN</button>
+  </div>
+  <div id="tip" class="hidden"></div>
+  <div id="msg" class="hidden"></div>
+  <div id="inv"><span class="tag">所持品 / ITEMS</span></div>
+  <div id="dlg" class="hidden"><div class="who"></div><div class="txt"></div><div class="more">▶ tap</div></div>
+
+  <div id="titleOv" class="ov">
+    <div style="text-align:center;max-width:92%">
+      <svg class="logo" viewBox="0 0 900 330" style="width:min(86%,760px)">
+        <circle cx="675" cy="95" r="78" fill="#e8ecf5" opacity=".92"/>
+        <circle cx="648" cy="78" r="18" fill="#cfd6e4" opacity=".55"/>
+        <circle cx="700" cy="115" r="12" fill="#cfd6e4" opacity=".5"/>
+        <circle cx="675" cy="95" r="130" fill="url(#gMoonB)"/>
+        <path d="M560 235 L600 205 L640 225 L670 195 L710 215 L760 185 L810 215 L860 190 L900 215 L900 330 L560 330 Z" fill="#0a0e19"/>
+        <path d="M596 236 L670 197 L744 236 L732 236 L670 208 L608 236 Z" fill="#161c2e"/>
+        <rect x="646" y="248" width="48" height="60" fill="#1b2237"/>
+        <rect x="654" y="258" width="12" height="16" fill="#c8b075" opacity=".8"/>
+        <rect x="676" y="258" width="12" height="16" fill="#c8b075" opacity=".55"/>
+        <g stroke="#39415f" stroke-width="1"><path d="M640 225 v-16 M700 218 v-14"/></g>
+        <ellipse cx="640" cy="199" rx="9" ry="13" fill="#b8443d" opacity=".85" class="flame"/>
+        <ellipse cx="700" cy="193" rx="8" ry="12" fill="#b8443d" opacity=".7" class="flame"/>
+        <text x="40" y="150" fill="#efe6cc" font-size="92" font-family="'Yu Mincho','Noto Serif JP',serif" letter-spacing="10">丑三つの宿</text>
+        <text x="44" y="205" fill="#c9c2aa" font-size="30" letter-spacing="6">月影亭怪談</text>
+        <text x="44" y="258" fill="#8f97b0" font-size="19" letter-spacing="3">TSUKIKAGE INN — GHOST HOUR ESCAPE</text>
+        <text x="44" y="296" fill="#c3403a" font-size="15" letter-spacing="2">— a point&amp;click kaidan adventure —</text>
+      </svg>
+      <div>
+        <button class="btn gold" id="tStart">始める / Start</button>
+        <button class="btn hidden" id="tCont">続きから / Continue</button>
+        <button class="btn" id="tHow">遊び方 / How to</button>
+        <button class="btn" id="tFull">全画面 / Fullscreen</button>
+        <button class="btn" id="tSnd">🔊</button>
+        <button class="btn" id="tLang">EN</button>
+      </div>
+      <div class="small" style="margin-top:10px" id="tClr"></div>
+    </div>
+  </div>
+
+  <div id="howOv" class="ov hidden">
+    <div class="card">
+      <h2 id="howT">遊び方 / How to Play</h2>
+      <p id="howP"></p>
+      <button class="btn" id="howClose">閉じる / Close</button>
+    </div>
+  </div>
+
+  <div id="mapOv" class="ov hidden"><div class="card"><h2 id="mapT">地図 / Map</h2><div id="mapBox"></div><button class="btn" id="mapClose">閉じる / Close</button></div></div>
+
+  <div id="dialOv" class="ov hidden">
+    <div class="card"><h2 id="dialT">ダイヤル錠 / Dial Lock</h2>
+      <div class="dialrow" id="dialRow"></div>
+      <button class="btn gold" id="dialOk">開ける / Open</button>
+      <button class="btn" id="dialX">やめる / Give up</button>
+    </div>
+  </div>
+
+  <div id="promptOv" class="ov hidden">
+    <div class="card"><h2 id="prT">名前</h2>
+      <p id="prSub"></p>
+      <input class="pinput" id="prIn" autocomplete="off">
+      <div><button class="btn gold" id="prOk">言う / Speak</button><button class="btn" id="prX">黙る / Silence</button></div>
+    </div>
+  </div>
+
+  <div id="rotOv" class="ov hidden">
+    <div style="text-align:center">
+      <svg viewBox="0 0 120 120" style="width:110px"><rect x="18" y="8" width="52" height="92" rx="8" fill="none" stroke="#cfc9b4" stroke-width="4"/><g class="sway"><rect x="14" y="34" width="92" height="52" rx="8" fill="none" stroke="#e0b64b" stroke-width="4"/></g><path d="M84 96 a34 34 0 0 1 -34 18" fill="none" stroke="#e0b64b" stroke-width="4" marker-end=""/></svg>
+      <div style="font-size:19px;margin:14px" id="rotMsg"></div>
+      <button class="btn" id="rotOk"></button>
+    </div>
+  </div>
+
+  <div id="endOv" class="ov hidden"><div id="endBox" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center"></div></div>
+ </div>
+</div>
+<script>
+"use strict";
+/* ============ i18n ============ */
+const I18N = {
+ ui_saved:["保存しました — 続きから遊べます","Saved — you can Continue later"],
+ ui_hintNone:["今は思いつかない…","Nothing comes to mind…"],
+ rotMsg:["画面を横にしてね\n(スマホは横向きにしてね)","Please turn your device sideways\n(landscape, please)"],
+ rotOk:["このまま遊ぶ","Play anyway"],
+ howP:["【操作】シーン内の光る場所や物をタップ／クリックして調べます。\n持ち物は下栏をタップで選択→別の場所へ使って解決。\n同じ持ち物を再度タップすると詳しく読めます。\n【目標】丑三つ時、怪談の宿「月影亭」から夜明け前に脱出せよ。\n【保存】場面転換のたび自動保存。💾でも手動保存。\nヒント💡・地図🗺・音🔊/🔇・言語切替は右上。","【Controls】Tap/click glowing spots and objects to examine them.\nTap an item in the bottom bar to select it, then tap a place to use it.\nTap a selected item again to read it closely.\n【Goal】Escape the ghost inn \u201cTsukikage\u201d before dawn, in the ox-hour.\n【Save】Auto-save on every move; 💾 saves manually too.\nTop-right buttons: hint 💡, map 🗺, sound 🔊, language."],
+ clrYes:["★ クリア済み / ★ CLEARED"],
+/* scene names */
+ sc_room:["離坐の部屋 — 始まり","Zashiki's Room — the Start"],
+ sc_cor:["長廊下","The Long Corridor"],
+ sc_bath:["脱衣場","The Vanity Room"],
+ sc_toi:["便所","The Latrine"],
+ sc_din:["広間","The Parlor"],
+ sc_tok:["床の間","The Alcove Room"],
+ sc_att:["屋根裏","The Attic"],
+ sc_gar:["中庭","The Courtyard"],
+ sc_well:["井戸","The Well"],
+ sc_sou:["土蔵","The Storehouse"],
+ sc_gen:["通用口","The Sealed Gate"],
+/* generic */
+ u_wrong:["今は使えない。","That won't work here."],
+ u_dark:["前が見えない。","I can't see a thing."],
+/* items */
+ it_comb:["樛","Hair Comb"],
+ it_matches:["マッチ箱","Matchbox"],
+ it_candle:["蝋燭","Candle"],
+ it_salt:["塩","Salt"],
+ it_hairpin:["簪","Hairpin"],
+ it_bell:["鈴","Bell"],
+ it_mirror:["鏡片","Mirror Shard"],
+ it_fish:["塩干の魚","Dried Fish"],
+ it_plate:["十枚目の皿","The Tenth Plate"],
+ it_gatekey:["錠の鍵","Padlock Key"],
+ it_diary:["日記","Diary"],
+ de_comb:["古風な樛。歯が一本、欠けている。","An old comb. One tooth is missing."],
+ de_matches:["まだ10本ほど残っている。","About ten matches left."],
+ de_candle:["白蝋の蝋燭。灯っていない。","A white wax candle. Unlit."],
+ de_candleL:["炎は揺れるが、消えない。夜風が恐れているのだ。","The flame flickers but never dies. Even the wind fears it."],
+ de_salt:["粗い海塩。指先が清められる気がした。","Coarse sea salt. It feels holy on the fingertips."],
+ de_hairpin:["銀の簪。細いがしなる。","A silver hairpin. Thin, but springy."],
+ de_bell:["神前の鈴。澄んだ音がする。","A shrine bell. Its tone is pure."],
+ de_mirror:["割れ残った鏡の一片。","A shard of the broken standing mirror."],
+ de_fish:["からからに干された魚。猫が好む匂い。","Fish, dried to a rattle. Cats would love the smell."],
+ de_plate:["藍の九曜紋。十枚目の皿。","An indigo nine-crest plate. The tenth plate."],
+ de_gatekey:["重い錠のための鍵。井戸の贈り物。","A heavy key for the great lock. The well's gift."],
+ de_diary:["月影亭の主の妻、お岩の日記。「…夫に目を潰された…名を呼ばれねば、門は開かぬ…」","Diary of Oiwa, the lord's wife: \"...my husband struck out my eyes... unless my name is spoken, the gate stays shut...\""],
+/* ---------- room (Zashiki) ---------- */
+ hs_futon:["ふとん","Futon"], hs_ball:["紅い鞠","Red Ball"], hs_shelf:["棚","Shelf"],
+ hs_scroll:["掛軸","Wall Scroll"], hs_win:["窓","Window"], hs_roomout:["廊下へ","Corridor →"],
+ m_futon0:["何か硬い… 樛だ。子守唄が遠のく。","Something hard... a comb. A lullaby fades away."],
+ m_futon1:["底まで空のふとん。まだ温かい。","The futon is empty to the bottom. Still warm."],
+ m_ball:["紅い鞠が、誰もいないのに転がって笑う。フフフ…","The red ball rolls by itself. Hee-hee... a child laughs."],
+ m_shelf:["下駄が一足。片方だけ、誰かが履いて出て行ったようだ。","One pair of geta — only one left. Someone walked off in the other."],
+ m_scroll:["掛軸に人形が三つ。墨書き：\u201c左は雨を向き、右は悲しみを背け、真ん中のみ門を見る\u201d","A scroll shows three dolls. Ink reads: \"The left faces rain, the right turns from grief, the middle only watches the gate.\""],
+ m_win:["東に月。夜明けには、まだ遠い。","The moon hangs east. Dawn is still far off."],
+ d_zwr1:["？","???"],d_zwr1t:["……起きてるの？ あそぼ。","...Are you awake? Let's play."],
+ d_zwr2:["？","???"],d_zwr2t:["お皿を数えるお姉さん、ずうっと数えてるよ。十枚目が無いんだって。","A big sister keeps counting plates. She says the tenth one is gone."],
+/* ---------- corridor ---------- */
+ hs_droom:["離坐の部屋へ →","Zashiki's Room →"],
+ hs_dbath:["湯道具の間 →","Vanity room →"], hs_dtoi:["便所 →","Latrine →"],
+ hs_ddin:["広間 →","Parlor →"], hs_dtok:["床の間 →","Alcove room →"],
+ hs_stairs:["屋根裏のはしご","Attic ladder ↑"], hs_togar:["障戸の向こう","Shoji door →"],
+ hs_candle:["棚の蝋燭","Candle on shelf"], hs_lamp:["吊り提灯","Hanging lantern"],
+ hs_spider:["蜘蛛","Spider"], hs_sign:["看板","Signboard"],
+ m_candle0:["白蝋の蝋燭を懐に入れる。","You pocket a white wax candle."],
+ m_candle1:["棚にはもう何も無い。","The shelf stands empty."],
+ m_lamp0:["闇だ。マッチが欲しくなる。","Dark. You wish for a match."],
+ m_lamp1:["炎がついた。廊下が、まだマシな闇になる。","The flame catches. The corridor becomes a lesser dark."],
+ m_lamp2:["提灯の火は、夜の間は消えないようだ。","The lantern flame will not go out, tonight."],
+ m_spider:["蜘蛛が糸を伝い、あなたの顔のすぐ前で止まる。","A spider descends on its thread and stops just before your face."],
+ m_sign:["\u201c月影亭 — 明治十九年創業\u201d 裏に細く墨：\u201c紙の封は炎に、鉄の封は水鏡に、名の封は言葉に\u201d","\u201cTsukikage Inn, est. 1886\u201d On the back, thin ink: \"the paper seal to flame, the iron seal to a water-mirror, the name seal to a word.\""],
+ m_cor1:["長廊下。提灯の火が、順番に、こちらを向いて消える。","The long corridor. One by one, the lanterns turn away and go out."],
+/* ---------- vanity room (bath) ---------- */
+ hs_mirror:["大きな鏡","Great Mirror"], hs_vanity:["理粧台","Vanity Table"],
+ hs_salt:["塩壺","Salt Jar"], hs_bath:["湯船","Bathtub"],
+ hs_drain:["排水口","Drain"], hs_bwin:["窓","Window"], hs_bathout:["廊下へ","Corridor →"],
+ m_mirror0:["曇った鏡。…自分の姿が、映っていない。","A fogged mirror. ...It does not show you."],
+ m_mirror1:["霜で文字が浮かぶ。「三・五・八 鏡に眠る」","Frost letters surface: \"3-5-8, asleep in the mirror.\""],
+ m_mirror3:["霜をこすって消した。鏡は再び、あなたを映さない。","You wipe the frost away. The mirror still refuses to show you."],
+ m_needlight:["鏡に近づきたい…が、暗すぎて近づけない。灯りが要る。","You want to reach the mirror... but it is too dark. Light, please."],
+ m_vanity0:["理粧台の抽斗。鍵穴の形が…樛の歯のようだ。","The vanity drawer. The keyhole is shaped... like the teeth of a comb."],
+ m_vanity1:["樛を差し込むと、カチリと音がして、抽斗が開いた。簪と短冊。","You slide in the comb. Click. The drawer opens: a hairpin and a paper strip."],
+ m_vanity2:["開いた抽斗は、もう空だ。","The open drawer is empty now."],
+ m_salt:["荒い海塩をひと掴み。掌がきりりと清まる。","A handful of coarse sea salt. Your palm feels cleansed."],
+ m_salt0:["塩壺は、まだ半分ほど残っている。","The salt jar is still half full."],
+ m_bath:["湯気が立つ湯船。誰かが、最近沸かしたのだ。","Steam rises from the tub. Someone heated it recently."],
+ m_bath1:["湯の色は、黒い髪のように静かだ。","The bathwater lies still as black hair."],
+ m_drain:["底に銀の光… 手は届かない。","A silver glint at the bottom... your hand can't reach."],
+ m_bwin:["窓ガラスに、外から水滴が付く。コツ…コツコツ… 外だ。","Drops appear on the window from outside. Tap... tap-tap... outside."],
+ m_bface:["窓の外に、白い顔！ 水滴は、その指が転げた粒だった。","A white face outside the window! The drops were beads left by its fingers."],
+ m_bface2:["もう何もいない。ガラスの指跡だけ。","Nothing there now. Only finger-marks on the glass."],
+/* ---------- latrine ---------- */
+ hs_s1:["一番目","First stall"], hs_s2:["二番目","Second stall"], hs_s3:["三番目","Third stall"],
+ hs_knock:["便所の戸","The stall door"], hs_graff:["落書き","Graffiti"],
+ hs_twin:["小窓","Small window"], hs_toiout:["廊下へ","Corridor →"],
+ m_s1:["紙は巻き目に、几帳面に巻かれている。…人がこんな巻き方をするはずがない。","The paper is wound... too neatly. No human winds it so."],
+ m_s2:["開けると、マッチ箱。一本も使われていない。","Inside: a matchbox. Not one match used."],
+ m_s3:["蜘蛛の巣に包まれた短冊。「封は三つ。名無しの封は、名を待っている」","A paper strip wrapped in cobweb: \"Three seals. The nameless seal waits for a name.\""],
+ m_graff:["落書き：\u201cハナコさんは三番目\u201d…書いた人の字は、震えている。","Graffiti: \"Hanako-san is in the third stall\"... the handwriting trembles."],
+ m_twin:["夜中に、花が咲いている。誰かが供えたのだ。","A flower blooms at midnight. Someone left an offering."],
+ m_knock:["戸の外で、何かが待つ気配。","Something waits outside the door."],
+ m_knockdone:["もう叩かれない。…礼を言われた気がする。","It does not knock again. ...You feel it thanked you."],
+ m_toienter:["便所。三つの襖。三番目の襖が、ゆっくり開いて、閉じる。","The latrine. Three stalls. The third opens slowly, then shuts."],
+ d_ghost:["朱面の怪","Red-Faced One"],
+ d_g1:["トントン…トントン…","Knock... knock..."],
+ d_g1t:["襖が震える。朱い顔が、硝子戸の向こうでのぞく。","The door shudders. A red face peeks through the frosted glass."],
+ d_g2t:["塩を差し出すと、それは深々と礼をした。\u201c…鏡に、三・五・八。数え忘れぬよう、数字を槍らせてある\u201d","You offer salt. It bows deeply. \"...In the mirror, 3-5-8. To keep them from forgetting, I froze the numbers there.\""],
+ d_g3t:["\u201c名を持たぬ封が、いちばん重い。名を呼んでやれ\u201d","\"The seal with no name is the heaviest. Call it by a name.\""],
+/* ---------- parlor ---------- */
+ hs_table:["低い机","Low Table"], hs_clock:["柱時計","Moon Clock"],
+ hs_dish:["椀差し","Dish Cover"], hs_dout:["廊下へ","Corridor →"],
+ m_table_paper:["机の下に短冊。「娘は数え始めた。小さい順に、九まで」","Under the table, a paper strip: \"The maiden began to count. By size, small to large — up to nine.\""],
+ m_clock0:["柱時計は、文字盤が満月。深夜の位置で止まっている。","The clock's face is a full moon, frozen at midnight."],
+ m_clock1:["月面がパリと割れ、その裏に…青磁の皿が一枚。","The moon-face splits with a crack... behind it, a celadon plate."],
+ m_dish0:["蓋を明ける。塩をふって焼いた魚。冷めていない。","You lift the lid: salt-grilled fish. Still warm."],
+ m_dish1:["椀差しには、魚が一匹。懐に入れる。","One fish remains under the dish cover. You take it."],
+ m_dish2:["椀差しは空。","The dish cover is empty."],
+ m_pldone:["九枚… 数え終わると、遠くで泣く声。「…もう一枚」","Nine... when the count ends, a sob far away: \"...one more plate.\""],
+ m_need9:["先に皿を全部、数えておくべきだった。","You should count all the plates first."],
+ m_plate10:["十枚目。藍の九曜紋。触れると、家中の障子が一度だけ震えた。","The tenth. An indigo nine-crest plate. At your touch, every shoji trembles once."],
+ m_dinent:["広間。低い机に、皿が九枚、大小ばらばらに重ねられている。","The parlor. Nine plates in mixed sizes stacked on a low table."],
+/* ---------- alcove room ---------- */
+ hs_doll0:["左の人形","Left doll"], hs_doll1:["真ん中の掛軸下…人形","Middle doll"], hs_doll2:["右の人形","Right doll"],
+ hs_ascroll:["掛軸（女）","Scroll (Woman)"], hs_biwa:["琵琶","Biwa"],
+ hs_alcove:["床の間","Tokonoma"], hs_tokwin:["雪窓","Snow Window"], hs_tokout:["廊下へ","Corridor →"],
+ m_dollturn:["人形がきゅっと首を回す。","The doll turns its neck with a squeak."],
+ m_dolls:["三人とも、正しい向きに座った。床の間から、カチリと音がする。","All three now face the right way. From the alcove floor: a click."],
+ m_ascroll0:["掛軸の女。顔はあるのに、目だけが、ない。","The woman on the scroll has a face — but no eyes."],
+ m_ascroll1:["掛軸の女が、こちらを見ている。目が、開いている！！","The scroll-woman is watching you. Her eyes... are open!!"],
+ m_biwa:["絃が一本、自ら鳴る。低い、湿った音。","One string sounds by itself. A low, damp note."],
+ m_alcove0:["床の間の板がずれている。…何か隠している。","The alcove board has shifted. ...It hides something."],
+ m_alcove1:["床の間から、干物と短冊が出てきた。\u201c井戸の娘は、十枚目をまだ探している\u201d","From the alcove: dried fish and a paper: \"The well-maiden still seeks her tenth plate.\""],
+ m_alcove2:["床の間は、もう空だ。","The alcove is empty now."],
+ m_tokwin:["雪が降る庭に、白い人が立っている。振り向かない。","In the snow, a white figure stands. It will not turn."],
+ m_tokenter:["床の間。人形が三つ、雪見障子に映る。","The alcove room. Three dolls reflected in the snow-viewing shoji."],
+/* ---------- attic ---------- */
+ m_attdark:["漆黒。息が白くなる。灯りがなければ、前に進めない。","Pitch black. Your breath turns white. Without light, you cannot go on."],
+ m_attenter:["屋根裏。月明かりの筋に、埃が漂う。","The attic. Dust swims in shafts of moonlight."],
+ hs_aladder:["はしご（下り）","Ladder down"], hs_trunk:["長持","Chest"], hs_amirror:["立鏡","Standing Mirror"],
+ hs_abox:["古箱","Old Box"], hs_arat:["鼠","Rat"],
+ m_trunk0:["長持の錠は古い鉄。…留め金は、細い物で跳ねる。","The chest's latch is old iron... sprung by something thin."],
+ m_trunk1:["簪で留め金を跳ねる。開くと、日記一冊。","You spring the latch with the hairpin. Inside: a diary."],
+ m_trunk2:["長持は空。衣の匂いだけが残る。","The chest is empty now. Only the smell of old kimono."],
+ m_mirror0:["鏡の中に、誰もいない。…あなたがいない。","No one in the mirror. ...You are not in it."],
+ m_mirror1:["鏡に、人の形。顔のあたりだけが、白く平ら。","A figure in the mirror. Where a face should be: smooth white nothing."],
+ m_mirror2:["無面のそれが、鏡面に手を当てようとする！ 逃げるか、鎮めるか！","The faceless one presses toward the glass! Flee — or appease it!"],
+ m_mirrorfreed:["鈴の音が屋根裏に広がる。それは深く礼をし、消えた。鏡はただの鏡になる。","The bell's ring spreads through the attic. It bows deeply and vanishes. The mirror becomes only a mirror."],
+ m_shard:["鏡面の裂け目から、一片を折って取る。","You break off a shard from the crack in the glass."],
+ m_mirroridle:["ただの鏡。…埃の向こうに、少しだけ自分の顔がある。","Just a mirror. Through the dust, your face, faintly."],
+ m_abox:["古い雛。紙の顔が、何枚も重なっている。","Old dolls. Their paper faces are stacked, dozens of them."],
+ m_arat:["鼠が走る。…屋根裏に鼠はいないはずだ。","A rat runs. ...There should be no rats in an attic."],
+/* ---------- courtyard ---------- */
+ hs_cat:["三毛猫","Calico Cat"], hs_tsukubai:["蹲踞","Stone Basin"], hs_lantern2:["石灯籠","Stone Lantern"],
+ hs_well:["井戸","Well"], hs_store:["土蔵","Storehouse"], hs_gate:["通用口","Sealed Gate"],
+ hs_pine:["松","Pine"], hs_cordoor:["廊下へ","Corridor →"], hs_stone:["浮いた石","Loose Stone"],
+ m_cat:["三毛猫が、火の玉の目でこちらを見る。","A calico cat looks at you with fox-fire eyes."],
+ m_catfish:["魚を差し出す。猫は食べ、喉を鳴らし、石垣の穴へ消えた。…そのいた石の下に、何か光る。","You offer the fish. The cat eats, purrs, and vanishes into a hole in the wall... beneath its stone, something glints."],
+ m_catgone:["穴の中は空。猫はもう、どこにもいない。","The hole is empty. The cat is gone."],
+ m_stone:["石の下から短冊。「猫は九つの命で、九夜看た。十夜目に、井戸へ行った」","A paper under the stone: \"The cat lived nine lives watching nine nights. On the tenth night, it went to the well.\""],
+ m_tsukubai:["蹲踞の水は黒い。雪が、ゆっくり積もる。","The basin water is black. Snow piles slowly."],
+ m_lantern2:["石灯籠。雪をどけると、中に短冊がある。","A stone lantern. Brushing the snow away, you find a paper strip inside."],
+ m_lantern3:["灯籠は空。風よけの穴に、雪が戻る。","The lantern is empty. Snow returns to its wind-hole."],
+ m_pine:["松の枝が揺れ、雪の降らせる。誰かいなかったのに。","The pine shakes down a shower of snow. Though no one was there."],
+ m_garenter:["中庭。雪は、誰の足跡もない。","The courtyard. The snow holds no footprints at all."],
+ m_garenter2:["中庭。雪の降る音が、やけに近い。","The courtyard. The sound of falling snow is oddly close."],
+/* storehouse door / dial */
+ m_door0:["土蔵の錠はダイヤル式。三つの数字。","The storehouse lock is a dial. Three numbers."],
+ m_doorlock:["カチリ…開いた。","Click... it opens."],
+ m_doorwrong:["どれかが違う。錠は開かない。","One digit is wrong. It will not open."],
+ m_dooropen:["土蔵は、もう開いている。","The storehouse already stands open."],
+/* storehouse interior */
+ hs_ab0:["算盤・一の段","Abacus rod (ones)"], hs_ab1:["算盤・十の段","Abacus (tens)"], hs_ab2:["算盤・百の段","Abacus (hundreds)"],
+ hs_note:["短冊","Paper Strip"], hs_shelf2:["棚","Shelf"], hs_kasa:["番傘","Kasa"],
+ hs_sout:["中庭へ","Courtyard →"],
+ m_abacus:["算盤が置いてある。珠を弾くと、カチ、と重い音がする。","An abacus sits here. Flicking a bead makes a heavy click."],
+ m_abhint:["三本の棒。棒の右半で一つ増え、左半で一つ減る。","Three rods. Click the right half to add one, the left half to remove one."],
+ m_abdone:["珠が「三・五・八」で並ぶ。棚の板が音もなくずれる。","The beads settle at 3-5-8. A shelf board slides without sound."],
+ m_note:["短冊に細い字。\u201c井戸の娘を鎮めるは、紛れたる十枚目。鉄の封は、鏡に映るを悪とし、紙の封は火を好む\u201d","Thin ink: \"Lay the well-maiden to rest with her lost tenth plate. The iron seal hates its own reflection; the paper seal welcomes fire.\""],
+ m_shelf0:["棚には、干物干しと古着だけ。","The shelf holds only dried fish racks and old clothes."],
+ m_shelf1:["開いた棚から鈴を取る。神前の鈴だ。","From the opened shelf you take a bell — a shrine bell."],
+ m_kasa0:["番傘が、ぱっと開く。傘の中央に、一つ目。…カサコソウ。","The oil-paper umbrella snaps open. At its center: one eye. ...Kasa-kozo."],
+ m_kasa1:["傘の骨に、短冊が巻いてあった。","A paper strip was rolled around the umbrella's rib."],
+/* well */
+ hs_ghost:["井戸端の娘","Maiden at the Well"], hs_bucket:["桶","Bucket"], hs_wellmouth:["井の底","The Deep Well"],
+ hs_wellout:["中庭へ","Courtyard →"],
+ m_wellenter:["井戸。桶が一つ、朽ちた縄で揺れている。","The well. A bucket sways on a rotted rope."],
+ m_bucket:["桶の中には、紅い鞠が一つ。","Inside the bucket: a single red ball."],
+ m_wellmouth:["底の水に、月が二つ。…片方は、後から開いた目だ。","Two moons at the bottom. ...One of them just opened as an eye."],
+ m_ghostback:["娘は背を向けて、静かに数を唱えている。","The maiden has her back turned, quietly chanting numbers."],
+ d_okikucount:["井戸の娘","Maiden of the Well"],
+ d_oc1:["…一つ。","...One."],
+ d_oc2:["…二つ。…三つ。","...Two. ...Three."],
+ d_oc3:["…四つ。五つ。六つ。","...Four. Five. Six."],
+ d_oc4:["…七つ。八つ。…九つ。","...Seven. Eight. ...Nine."],
+ d_oc5t:["…もう、一枚がない。…もう一枚が、ない。…一枚が……","...One plate is missing. One plate... is gone. One plate..."],
+ m_wail:["娘は泣きじゃくり、黒髪が井戸から溢れる。","The maiden sobs; black hair overflows the well."],
+ m_needplate:["娘は十枚目を求めている。手ぶらでは、近づけない。","She seeks the tenth plate. You cannot approach empty-handed."],
+ d_okiwa:["井戸の娘","Maiden of the Well"],
+ d_ow1t:["娘は皿を胸に抱き、長い沈黙のあと、振り向いた。顔は、もう怖くなかった。","She cradles the plate. After a long silence she turns. Her face is no longer frightening."],
+ d_ow2t:["\u201c私はお菊。…床の間の奥様に、ずっと深い無念があった。その名を、門の前で呼んでやりて\u201d","\u201cI am Okiku. ...The lady of the alcove bore a deeper grief. Speak her name before the gate.\u201d"],
+ d_ow3t:["\u201cお岩。その三字が、封の三つより重い。\u201d 娘は消え、井端に鍵が一つ残る。","\u201cOiwa. Those three syllables weigh more than three seals.\u201d She vanishes, leaving one key on the well's rim."],
+ m_gotkey:["井端から、錠の鍵を取る。鉄は暖かい。","You take the padlock key from the well's rim. The iron is warm."],
+ m_welldone:["井戸は静か。水面に、月が一つだけ映る。","The well is still. Only one moon on the water."],
+/* gate */
+ hs_chain:["錠と鎖","Chain & Lock"], hs_sealp:["紙の封","Paper Seal"], hs_seali:["鉄の封","Iron Seal"],
+ hs_sealn:["名の封","Name Seal"], hs_door:["通用口","The Gate"], hs_genout:["中庭へ","Courtyard →"],
+ m_chain0:["重い錠。鎖は三度巻き。","A heavy lock. The chain is wound three times."],
+ m_chain1:["錠が外れ、鎖が石畳にどさりと落ち。","The lock falls away; the chain thuds onto the stones."],
+ m_chain2:["鎖はもう、石畳に横たわるだけ。","The chain only lies on the stones now."],
+ m_sealp0:["紙の封。朱の印。「止」。黴の匂い。","A paper seal, vermilion crest: \"STOP.\" It smells of mold."],
+ m_sealp1:["封は炎に巻かれ、丸まり、灰になる。誰かが、深く息を吐いた。","The seal curls in the flame and turns to ash. Someone exhales, deeply."],
+ m_seali0:["鉄の封。触れられないほど冷たい。…鏡面が、なぜか怖い様子。","An iron seal, cold past touching. ...It seems strangely afraid of reflections."],
+ m_seali1:["鏡を掲げると、鉄の封は己の顔を見て、震え、落ちた。","You raise the mirror. The iron seal sees its own face, trembles, and falls."],
+ m_sealn0:["名の封。紙のみ。文字がない。…だから、いちばん重い。","A name seal. Only paper — no writing. ...That is why it is the heaviest."],
+ m_sealn1:["紙が自ら裂ける。名を、呼んだのだ。","The paper tears itself. You called it by its name."],
+ m_needname:["封に名がない。…誰の名を呼べばいい？","No name on the seal. ...Whose name should be spoken?"],
+ m_genenter:["通用口。三つの封と、巻き鎖。門は、生きたまま封じられている。","The side gate. Three seals and a wound chain. The gate is sealed while still alive."],
+ m_doorlocked:["門はびくともせぬ。まだ解けるべき物が残っている。","The gate will not budge. Something still bound remains."],
+ m_needall:["紙・鉄・名の三つの封と、鎖。四つを解かねば。","Paper, iron, name — three seals, and the chain. All four must go."],
+/* ending */
+ d_end1t:["門が、自ら開く。外は、鉛色の夜明け前。","The gate opens by itself. Outside: a lead-gray dawn before dawn."],
+ d_end2t:["遠くに、遠い鳩。月影亭の屋根に、白い煙のように朝が上がる。","Far off, a distant rooster. Morning rises like white smoke over Tsukikage Inn's roof."],
+ d_end3t:["背後で障子が一度だけ鳴る。振り返ると、誰もいない。鞠が一つ、門前に転がっている。","Behind you, a shoji rattles once. When you turn — no one. A red ball rests at the gate."],
+ endTitle:["夜明け — DAWN",""],
+ endLine1:["丑三つの宿・月影亭 脱出成功","You escaped Tsukikage Inn, the house of the ox-hour."],
+ endLine2:["井戸のお菊は眠り、無面は消え、朱面は礼を言い、童女は鞠で遊んでいる。","Okiku of the well sleeps; the Faceless one is gone; the Red-Faced one gave thanks; the child plays with her ball."],
+ endTanz:["短冊 %N%/7","Paper strips %N%/7"],
+ endHintN:["ヒント使用 %N 回","Hints used: %N"],
+ endBack:["タイトルへ","To Title"], endAgain:["もう一度","Play Again"],
+/* hints */
+ h_room:["短冊を7枚集めると、夜明けの挨拶が変わる。ふとんを数えよう。","Collecting all 7 paper strips changes the dawn greeting. Try counting the futon."],
+ h_cor:["棚の蝋燭と、便所のマッチ。火は鏡と封のために必要だ。","The shelf candle and the latrine matches. Fire is needed for the mirror and for one seal."],
+ h_bath:["鏡は霜を隠している。灯りを掲げて見よ。","The mirror hides frost-writing. View it under a light."],
+ h_bath2:["理粧台の抽斗は、樛の形で開く。樛はどこか…？","The vanity drawer opens with a comb's shape. Where is a comb...?"],
+ h_toi:["朱面の怪には、精めの塩。","To appease the Red-Faced One, offer purifying salt."],
+ h_toi2:["マッチは、几帳面ではない襖の中。","The matches are inside the one stall that is not fussy."],
+ h_din:["娘は小さい順に数えた。九枚を数え終えれば、月が見守る。","The maiden counted by size. Once all nine are counted, the moon watches."],
+ h_din2:["月時計の裏に、十枚目が隠れている。","The tenth plate hides behind the moon-clock."],
+ h_tok:["掛軸の墨書きを思い出せ。左・真ん中・右の向きを。","Remember the scroll's ink writing: the dolls' left, middle, right poses."],
+ h_att:["無面には、澄んだ音で鎮める。…神前の鈴のような。","Appease the Faceless one with a pure sound... like a shrine bell."],
+ h_att0:["屋根裏は漆黒。蝋燭に火を灯してから入るべきだ。","The attic is pitch dark. Light the candle before entering."],
+ h_gar:["猫は飢えている。広間の椀差しには、まだ温かい物があった。","The cat is starving. Something still warm sat under the parlor's dish cover."],
+ h_well:["娘が求める十枚目を、差し出そう。","Offer the maiden the tenth plate she seeks."],
+ h_sou:["鏡の霜の数字を、算盤に。珠の増減は右半・左半で。","Put the mirror's frost numbers on the abacus. Right half adds, left half removes."],
+ h_sou2:["算盤が三・五・八で並ぶと、棚が開く。","When the abacus reads 3-5-8, the shelf opens."],
+ h_gen:["封は三つ。看板の裏を読んだか？ 紙=炎、鉄=水鏡、名=言葉。","Three seals. Did you read the sign's back? Paper=flame, iron=a mirror, name=a word."],
+ h_gen2:["妻の名は、屋根裏の長持の中に書かれている。","The wife's name is written in the attic chest's diary."],
+};
+function L(){return lang==='ja'?0:1;}
+function t(k){const v=I18N[k];return v?v[L()]:k;}
+function tf(k,o){let s=t(k);for(const kk in o){s=s.split('%'+kk+'%').join(o[kk]);}return s;}
+/* ============ state ============ */
+let lang='ja', soundOn=true, cur='room';
+let S={fl:{}, inv:[], sel:-1, ab:[0,0,0], dial:[0,0,0], stare:0, hints:0, cleared:false, tanz:{}, kasa:0};
+const TANZ=7;
+const SAVEKEY='tsukikage_inn_save_v1';
+function F(k){return !!S.fl[k];}
+function setF(k,v){S.fl[k]=(v===undefined)?true:v;if(!F(k))delete S.fl[k];}
+function has(it){return S.inv.indexOf(it)>=0;}
+function take(it){S.inv.push(it);sfx('pick');renderInv();autosave();}
+function cnt9(){let n=0;for(let i=1;i<=9;i++)if(F('p'+i))n++;return n;}
+function tanzs(){let n=0;for(let i=1;i<=TANZ;i++)if(S.fl['tz'+i])n++;return n;}
+/* save */
+function save(){try{localStorage.setItem(SAVEKEY,JSON.stringify({v:1,lang,soundOn,cur,S}));}catch(e){}}
+function autosave(){save();}
+function hasSave(){try{return !!localStorage.getItem(SAVEKEY);}catch(e){return false;}}
+function load(){try{const d=JSON.parse(localStorage.getItem(SAVEKEY));if(!d)return false;
+  lang=d.lang;soundOn=d.soundOn;S=d.S;S.sel=-1;S.kasa=S.kasa||0;cur=d.cur||'room';setF('v_room');setF('v_'+cur);return true;}catch(e){return false;}}
+function newGame(){S={fl:{},inv:[],sel:-1,ab:[0,0,0],dial:[0,0,0],stare:0,hints:0,cleared:S.cleared||false,tanz:{},kasa:0};cur='room';setF('v_room');}
+/* ============ sound ============ */
+let AC=null,MASTER=null,WIND=null,creakTimer=null,noiseBuf=null;
+function ensureAC(){if(AC)return;try{AC=new (window.AudioContext||window.webkitAudioContext)();
+  MASTER=AC.createGain();MASTER.gain.value=soundOn?0.55:0;MASTER.connect(AC.destination);
+  const len=AC.sampleRate*2;noiseBuf=AC.createBuffer(1,len,AC.sampleRate);
+  const d=noiseBuf.getChannelData(0);let last=0;
+  for(let i=0;i<len;i++){const w=Math.random()*2-1;last=(last+0.02*w)/1.02;d[i]=last*3.5;}
+  startAmb();}catch(e){AC=null;}}
+function startAmb(){if(!AC||WIND)return;
+  const src=AC.createBufferSource();src.buffer=noiseBuf;src.loop=true;
+  const bp=AC.createBiquadFilter();bp.type='bandpass';bp.frequency.value=420;bp.Q.value=0.7;
+  const g=AC.createGain();g.gain.value=0.12;
+  const lfo=AC.createOscillator();lfo.frequency.value=0.07;
+  const lg=AC.createGain();lg.gain.value=180;lfo.connect(lg);lg.connect(bp.frequency);lfo.start();
+  src.connect(bp);bp.connect(g);g.connect(MASTER);src.start();WIND=src;
+  const o1=AC.createOscillator(),o2=AC.createOscillator(),og=AC.createGain();
+  o1.frequency.value=52;o2.frequency.value=53.7;o1.type=o2.type='sine';og.gain.value=0.035;
+  o1.connect(og);o2.connect(og);og.connect(MASTER);o1.start();o2.start();
+  scheduleCreak();}
+function scheduleCreak(){clearTimeout(creakTimer);
+  creakTimer=setTimeout(()=>{if(AC&&soundOn)randomCreak();scheduleCreak();},12000+Math.random()*22000);}
+function randomCreak(){const o=AC.createOscillator(),g=AC.createGain(),f=AC.createBiquadFilter();
+  f.type='lowpass';f.frequency.value=900;o.type='sawtooth';
+  o.frequency.setValueAtTime(160+Math.random()*120,AC.currentTime);
+  o.frequency.exponentialRampToValueAtTime(40,AC.currentTime+1.1);
+  g.gain.setValueAtTime(0.001,AC.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.05,AC.currentTime+0.08);
+  g.gain.exponentialRampToValueAtTime(0.0001,AC.currentTime+1.3);
+  o.connect(f);f.connect(g);g.connect(MASTER);o.start();o.stop(AC.currentTime+1.4);}
+function tone(freq,dur,type,vol,when,slideTo){if(!AC)return;const t0=AC.currentTime+(when||0);
+  const o=AC.createOscillator(),g=AC.createGain();o.type=type||'sine';o.frequency.setValueAtTime(freq,t0);
+  if(slideTo)o.frequency.exponentialRampToValueAtTime(slideTo,t0+dur);
+  g.gain.setValueAtTime(0.0001,t0);g.gain.exponentialRampToValueAtTime(vol||0.2,t0+0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001,t0+dur);
+  o.connect(g);g.connect(MASTER);o.start(t0);o.stop(t0+dur+0.05);}
+function noiseHit(dur,vol,freq){if(!AC)return;const s=AC.createBufferSource();s.buffer=noiseBuf;s.loop=true;
+  const f=AC.createBiquadFilter();f.type='bandpass';f.frequency.value=freq||800;f.Q.value=1.2;
+  const g=AC.createGain();const t0=AC.currentTime;
+  g.gain.setValueAtTime(vol||0.2,t0);g.gain.exponentialRampToValueAtTime(0.0001,t0+dur);
+  s.connect(f);f.connect(g);g.connect(MASTER);s.start(t0);s.stop(t0+dur+0.05);}
+function sfx(n){if(!AC||!soundOn)return;switch(n){
+ case 'click':tone(900,0.05,'square',0.05);break;
+ case 'pick':[523,659,784].forEach((f,i)=>tone(f,0.22,'triangle',0.12,i*0.07));break;
+ case 'tanz':[784,988,1175,1568].forEach((f,i)=>tone(f,0.3,'triangle',0.1,i*0.09));break;
+ case 'door':tone(90,0.7,'sawtooth',0.12,0,55);noiseHit(0.5,0.08,300);break;
+ case 'slide':tone(140,0.5,'triangle',0.1,0,90);break;
+ case 'chime':[523,659,784,1046,1318].forEach((f,i)=>tone(f,0.7,'sine',0.12,i*0.12));break;
+ case 'err':tone(196,0.18,'square',0.09);tone(155,0.22,'square',0.09,0.16);break;
+ case 'scare':tone(880,0.5,'sawtooth',0.18,0,220);tone(93,0.8,'sawtooth',0.2,0.02,60);noiseHit(0.4,0.15,2000);break;
+ case 'wail':tone(620,1.6,'sine',0.14,0,180);tone(622,1.6,'sine',0.1,0,178);break;
+ case 'bell':tone(1760,1.4,'triangle',0.16);tone(2640,0.9,'sine',0.07,0.01);tone(3520,0.5,'sine',0.03,0.02);break;
+ case 'match':noiseHit(0.12,0.25,3000);break;
+ case 'fire':noiseHit(0.9,0.12,600);break;
+ case 'plate':tone(1200,0.16,'sine',0.1);tone(1810,0.12,'sine',0.05,0.02);break;
+ case 'glass':noiseHit(0.3,0.2,4500);tone(2400,0.3,'sine',0.06,0,900);break;
+ case 'cat':tone(700,0.5,'sine',0.12,0,400);tone(500,0.4,'sine',0.1,0.45,620);break;
+ case 'rat':noiseHit(0.1,0.12,1500);noiseHit(0.08,0.1,2200);break;
+ case 'knock':[0,0.18,0.4].forEach(w=>noiseHit(0.06,0.22,180));break;
+ case 'clank':tone(320,0.3,'square',0.1);noiseHit(0.2,0.15,900);tone(190,0.4,'square',0.08,0.05,150);break;
+ case 'biwa':tone(196,1.2,'triangle',0.15);tone(197,1.2,'sine',0.08);break;
+ case 'tick':tone(1400,0.03,'square',0.05);break;
+ case 'laugh':[880,760,660,560].forEach((f,i)=>tone(f,0.14,'sine',0.05,i*0.12));break;
+ case 'rooster':tone(1200,0.25,'square',0.08,0,900);tone(1000,0.5,'square',0.08,0.25,1400);tone(950,0.6,'sawtooth',0.06,0.6,600);break;
+ case 'dial':tone(700,0.05,'square',0.06);break;
+ case 'unlock':tone(400,0.1,'square',0.08);tone(600,0.15,'square',0.08,0.1);break;
+}}
+function setSoundUI(){document.getElementById('bSnd').textContent=soundOn?'🔊':'🔇';
+  document.getElementById('tSnd').textContent=soundOn?'🔊 Sound ON':'🔇 Sound OFF';
+  if(MASTER)MASTER.gain.value=soundOn?0.55:0;}
+function toggleSound(){soundOn=!soundOn;ensureAC();setSoundUI();save();}
+/* ============ DOM refs & svg helpers ============ */
+const $=id=>document.getElementById(id);
+const art=$('art'),hots=$('hots'),svg=$('view');
+function R(x,y,w,h,f,o){return `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${f}" ${o||''}/>`}
+function P(d,f,o){return `<path d="${d}" fill="${f}" ${o||''}/>`}
+function C(cx,cy,r,f,o){return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${f}" ${o||''}/>`}
+function EL(cx,cy,rx,ry,f,o){return `<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="${f}" ${o||''}/>`}
+function LT(x,y,s,o){return `<text x="${x}" y="${y}" ${o||''}>${s}</text>`}
+function G(open,inner){return `<g ${open||''}>${inner}</g>`}
+function LN(x1,y1,x2,y2,st,w,extra){return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${st}" stroke-width="${w}" ${extra||''}/>`}
+function foglayer(x,y,rx,ry,cls){return `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="#9fb4d8" opacity=".07" filter="url(#blurB)" class="${cls||'fog'}"/>`}
+function vignette(){return R(0,0,1280,720,'url(#gVig)')}
+function snowfall(n){let s='';for(let i=0;i<n;i++){const x=(40+Math.random()*1200).toFixed(0),r=(1.5+Math.random()*2.5).toFixed(1),
+ d=(Math.random()*9).toFixed(1),dur=(6+Math.random()*6).toFixed(1),y0=(Math.random()*300).toFixed(0);
+ s+=`<circle cx="${x}" cy="-20" r="${r}" fill="#e8eef8" opacity="${(0.35+Math.random()*0.5).toFixed(2)}" class="sn" style="animation-duration:${dur}s;animation-delay:-${d}s" transform="translate(0,${y0})"/>`;}
+ return s;}
+function moon(x,y,r){return C(x,y,r*2.2,'url(#gMoonB)')+C(x,y,r,'#e6ebf4')+C(x-r*0.3,y-r*0.25,r*0.16,'#ccd4e2')+C(x+r*0.25,y+r*0.2,r*0.1,'#ccd4e2')+C(x+r*0.05,y-r*0.35,r*0.07,'#d5dbe7')}
+function chochin(x,y,w,h,lit){let s='';if(lit)s+=C(x,y-h/2,h*1.5,'url(#gLamp)');
+ s+=`<g class="${lit?'sway':''}">`;
+ s+=R(x-4,y-h-8,8,8,'#241a10');
+ s+=EL(x,y-h/2,w/2,h/2,lit?'#c8503c':'#3a3446')+EL(x,y-h/2,w/2-3,h/2-4,lit?'#e06a4a':'#2e2a3a');
+ for(let i=1;i<4;i++)s+=LN(x-w/2+3,y-h+h*i/4,x+w/2-3,y-h+h*i/4,'#241a10',1.2);
+ s+=R(x-5,y-h,10,4,'#241a10')+R(x-5,y-h,10,0,'#241a10')+'</g>';return s;}
+function shojiWin(x,y,w,h,glow){return R(x,y,w,h,glow?'#3d4d6e':'#2a3450')+`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="url(#patShoji)" opacity=".8"/>`+
+ R(x,y,w,h,'none','stroke="#1a2135" stroke-width="6"')}
+function roomBase(o){o=o||{};const bw=o.bw||'#1a2034',sw=o.sw||'#151a2c',fl=o.fl||'url(#gFloor)';
+ let s='';
+ s+=P('M0 0 L1280 0 L1080 120 L200 120 Z',o.ce||'#10141f');
+ s+=P('M0 0 L200 120 L200 560 L0 720 Z',sw);
+ s+=P('M1280 0 L1080 120 L1080 560 L1280 720 Z',sw);
+ s+=R(200,120,880,440,bw);
+ s+=P('M0 720 L200 560 L1080 560 L1280 720 Z',fl);
+ s+=LN(200,120,1080,120,'#0b0e18',3)+LN(200,560,1080,560,'#0b0e18',4)+LN(200,120,200,560,'#0b0e18',3)+LN(1080,120,1080,560,'#0b0e18',3);
+ return s;}
+function tatamiFloor(){let s=P('M0 720 L200 560 L1080 560 L1280 720 Z','url(#patTatami)');
+ s+=LN(320,720,430,560,'#1c2233',3)+LN(960,720,850,560,'#1c2233',3)+LN(640,720,640,560,'#1c2233',3);return s;}
+function doorway(x,y,w,h,c){return R(x,y,w,h,c||'#0e1220')+R(x,y,w,h,'none','stroke="#3f3421" stroke-width="7"')+R(x-9,y-9,w+18,9,'#241a10')}
+function navArrow(x,y,dir){const d={r:'M0 -14 L18 0 L0 14 Z',l:'M0 -14 L-18 0 L0 14 Z',u:'M-14 0 L0 -18 L14 0 Z',d:'M-14 0 L0 18 L14 0 Z'}[dir]||'M0 -14 L18 0 L0 14 Z';
+ return `<g transform="translate(${x},${y})" class="navp">${P(d,'#efe2b4','stroke="#6b5b2a" stroke-width="2"')}</g>`}
+function plateSvg(x,y,r,crest){return EL(x,y,r,r*0.34,'#dfe6ee')+EL(x,y-r*0.05,r*0.78,r*0.26,'#c3cfdd')+EL(x,y-r*0.07,r*0.4,r*0.13,crest?'#3d5a94':'#8fa3bd')+(crest?C(x,y-r*0.07,r*0.06,'#7d97c9'):'')}
+function ghostFig(x,y,s,face){let g=`<g opacity=".9" filter="url(#soft)" transform="translate(${x},${y}) scale(${s})">`;
+ g+=P('M0 -120 q-52 10 -60 80 q-8 74 -26 140 l172 0 q-18 -66 -26 -140 q-8 -70 -60 -80 z','url(#gGhost)');
+ g+=EL(0,-118,44,50,'#eef1f7');
+ if(face){g+=EL(-16,-124,7,9,'#1a1a24')+EL(16,-124,7,9,'#1a1a24')+EL(0,-100,9,5,'#2a2030');}
+ g+=P('M-40 -160 q-30 60 -24 150 q8 -90 30 -140 z','#0e0e16')+P('M40 -160 q30 60 24 150 q-8 -90 -30 -140 z','#0e0e16');
+ g+='</g>';return g;}
+/* item icons (inventory) */
+const ICONS={
+ comb:'<path d="M6 10 h32 v8 h-32 z" fill="#b98a4f"/><g fill="#b98a4f"><rect x="8" y="18" width="3" height="18"/><rect x="14" y="18" width="3" height="18"/><rect x="20" y="18" width="3" height="18"/><rect x="26" y="18" width="3" height="18"/><rect x="35" y="18" width="3" height="18"/></g>',
+ matches:'<rect x="10" y="16" width="24" height="22" rx="3" fill="#8c4a3a"/><rect x="10" y="12" width="24" height="8" fill="#c9b075"/><g fill="#e06a4a"><circle cx="30" cy="9" r="2.4"/><circle cx="24" cy="7" r="2.4"/><circle cx="18" cy="9" r="2.4"/></g>',
+ candle:'<rect x="17" y="18" width="10" height="26" rx="2" fill="#e8e4d5"/><rect x="21" y="12" width="2" height="7" fill="#5a4a30"/><path class="flame" d="M22 3 q5 6 0 10 q-5 -4 0 -10" fill="#ffb45e"/>',
+ salt:'<path d="M14 20 h16 l-2 22 h-12 z" fill="#cfd6e2"/><rect x="13" y="14" width="18" height="7" rx="2" fill="#8c4a3a"/><g fill="#fff" opacity=".8"><circle cx="19" cy="28" r="1.2"/><circle cx="25" cy="32" r="1.2"/><circle cx="22" cy="36" r="1.2"/></g>',
+ hairpin:'<path d="M12 34 l20 -22" stroke="#cfd6e2" stroke-width="3" fill="none"/><path d="M30 8 q8 2 4 10 q-6 -2 -4 -10" fill="#e0b64b"/>',
+ bell:'<path d="M14 32 q0 -18 10 -18 q10 0 10 18 z" fill="#e0b64b"/><rect x="12" y="32" width="24" height="4" rx="2" fill="#b8912f"/><circle cx="24" cy="40" r="3" fill="#b8912f"/>',
+ mirror:'<path d="M10 38 L18 10 L34 30 L24 40 Z" fill="#9fc3e8" stroke="#cfd6e2" stroke-width="2"/><path d="M16 28 l6 -10" stroke="#fff" stroke-width="2"/>',
+ fish:'<path d="M8 24 q12 -9 26 0 q-14 9 -26 0 z" fill="#c9a15f"/><path d="M34 24 l8 -6 v12 z" fill="#c9a15f"/><circle cx="15" cy="23" r="1.5" fill="#2a2016"/>',
+ plate:'<circle cx="24" cy="24" r="16" fill="#c3cfdd"/><circle cx="24" cy="24" r="10" fill="#3d5a94"/><circle cx="24" cy="24" r="3" fill="#7d97c9"/>',
+ gatekey:'<circle cx="15" cy="18" r="7" fill="none" stroke="#e0b64b" stroke-width="4"/><rect x="18" y="24" width="4" height="18" fill="#e0b64b"/><rect x="22" y="34" width="8" height="3" fill="#e0b64b"/><rect x="22" y="28" width="6" height="3" fill="#e0b64b"/>',
+ diary:'<rect x="10" y="10" width="26" height="30" rx="2" fill="#d8cdb2"/><rect x="10" y="10" width="6" height="30" fill="#8c4a3a"/><g stroke="#5a4a30" stroke-width="1.4"><path d="M20 16 h12 M20 22 h12 M20 28 h12 M20 34 h8"/></g>',
+};
+function renderInv(){const bar=$('inv');bar.querySelectorAll('.slot').forEach(e=>e.remove());
+ S.inv.forEach((it,i)=>{const d=document.createElement('div');d.className='slot'+(S.sel===i?' sel':'');
+  d.innerHTML=`<svg viewBox="0 0 48 48">${ICONS[it]||''}</svg><div class="nm">${t('it_'+it)}</div>`;
+  d.onclick=()=>{ if(S.sel===i){ msg(it==='candle'&&F('lit')?t('de_candleL'):t('de_'+it)); }
+   else {S.sel=i;renderInv();sfx('click');} };
+  bar.appendChild(d);});}
+function selectedItem(){return S.sel>=0?S.inv[S.sel]:null;}
+const I18N2={
+ m_bathent:["脱衣場。湯気が、人のため息のように揺れる。","The vanity room. Steam sways like someone's sigh."],
+ m_tanzGot:["短冊(%N%/%T%)を拾った。夜明けの挨拶が変わる気配。","Paper strip (%N%/%T%) obtained. The dawn greeting feels different now."],
+ m_storein:["土蔵。埃と干物の匂い。","The storehouse. Dust and dried fish."],
+ m_nameq:["封に問われた。…誰の名を、呼ぶ？","The seal asks: ...whose name do you call?"],
+ m_namefail:["紙は動かぬ。…違う。","The paper does not stir. ...Not her."],
+ m_plk:["皿を数えた。%N%/9。","Plate counted. %N%/9."],
+ m_litboth:["マッチで提灯に火を灯す。懐の蝋燭にも移す。炎は、震えている。","You light the lantern with a match, and pass the flame to your candle. The fire trembles."],
+ m_nocandle:["火は要る。…棚に、白い蝋燭があった気がする。","You need fire. ...Something white and waxy sat on the shelf, you think."],
+ m_lamp3:["提灯には既に火がある。","The lantern already has flame."],
+ m_hatch:["屋根裏への口。引く綱が、誰もいないのに揺れている。","The attic hatch. Its pull-cord swings though no one is there."],
+ m_tanztaken:["もう短冊はない。","No more paper strips here."],
+ hs_abl:["珠を落とす(左)","Lower bead (left)"], hs_abr:["珠を上げる(右)","Raise bead (right)"],
+ ui_tanzCnt:["短冊集め","Tanzaku found"],
+ ui_erase:["消去 / Erase save","Erase save"],
+ ui_cont1:["続きから始めます。","Resuming your stay."],
+ d_okikucount:["井戸の娘","Maiden of the Well"],
+ b_mirrorB:["鏡面に霜が戻る…そして、三つの文字。「三・五・八 鏡に眠る」","Frost returns to the glass... then three digits. \"3-5-8, asleep in the mirror.\""],
+ m_s2b:["もう空の箱だ。","The box is empty now."],
+ hs_platek:["皿","Plate"],
+ m_start1:["丑三つ時——夜中の二時すぎ。旅の宿「月影亭」の間（ま）で目を覚ました。襖の向こうで、何かが静かに、暮らしている。","The hour of the ox — past two a.m. You wake in a room of the wayside inn \u201cTsukikage\u201d. Beyond the shoji, something lives, quietly."],
+ m_start2:["襖は、開かない。開くのは——夜明けか、あなたか。","The shoji will not open. What opens first — dawn, or you?"],
+ endTitle:["夜明け — DAWN","Dawn"],
+ m_alcove1:["床の間から、干物と、メモ。\u201c井戸の娘は、いまだ紛れたる十枚目を探している\u201d","From the alcove: dried fish, and a note: \"The well-maiden still seeks her lost tenth plate.\""],
+};
+Object.keys(I18N2).forEach(k=>{I18N[k]=I18N2[k];});
+function gotTanz(n){if(!S.fl['tz'+n]){S.fl['tz'+n]=true;sfx('tanz');msg(tf('m_tanzGot',{N:n,T:TANZ}));autosave();return true;}return false;}
+/* ============ scenes: art + hotspots ============ */
+function HS(id,x,y,w,h,l,g){return {id,x,y,w,h,l,g:!!g};}
+/* ---- 1. room ---- */
+function artRoom(){let s=roomBase({bw:'#222941',sw:'#181e31'});
+ s+=P('M0 0 L1280 0 L1080 120 L200 120 Z','#151a29');
+ s+=P('M60 0 L250 120 L275 120 L85 0 Z','#2a2016')+P('M1220 0 L1030 120 L1005 120 L1195 0 Z','#2a2016');
+ s+=R(0,105,1280,14,'#241a10');
+ s+=shojiWin(690,150,170,160,true);
+ s+=P('M560 720 L640 560 L770 560 L900 720 Z','rgba(200,220,255,.05)');
+ s+=tatamiFloor();
+ s+=R(330,150,150,250,'#241a10')+R(336,158,138,232,'#d8cfb4')+R(326,395,158,12,'#3a2c1a');
+ s+=P('M362 300 h20 v56 h-20 z','#8c4a3a')+C(372,290,10,'#e8e4d5');
+ s+=P('M402 300 h20 v56 h-20 z','#c8b075')+C(412,290,10,'#e8e4d5')+C(419,292,2.4,'#1a1a24');
+ s+=P('M442 300 h20 v56 h-20 z','#3d5a94')+C(452,290,10,'#e8e4d5')+P('M447 288 l-6 4 6 4','none','stroke="#1a1a24" stroke-width="2"');
+ s+=`<g fill="#5a4a30" font-size="13" font-family="serif">${LT(345,190,'左は雨')}${LT(345,210,'真ん中は門')}${LT(345,230,'右は悲')}${LT(345,250,'を背け')}</g>`;
+ s+=R(215,330,140,12,'#3a2c1a')+R(225,342,10,50,'#2a2016')+R(335,342,10,50,'#2a2016');
+ s+=P('M250 316 q20 -10 44 0 l-6 12 h-34 z','#8a6a44')+C(262,320,3,'#5a4028');
+ s+=P('M300 318 q14 -8 30 0 l-4 10 h-24 z','#8a6a44');
+ s+=P('M470 682 L520 555 L710 555 L665 682 Z','#cdd3de');
+ s+=P('M482 672 L527 570 L697 570 L655 672 Z','#9fadc4');
+ s+=LN(505,620,675,620,'#7e8ca6',2);
+ s+=EL(585,565,44,17,'#eae6d8');
+ s+=G('class="bob"',C(855,645,24,'#b8443d')+P('M831 645 q24 12 48 0','none','stroke="#e8e4d5" stroke-width="3"')+P('M855 621 q12 24 0 48','none','stroke="#e8e4d5" stroke-width="3"'));
+ s+=R(1150,300,14,420,'#3a2c1a')+R(1216,300,14,420,'#3a2c1a');
+ for(let i=0;i<7;i++)s+=R(1150,330+i*56,80,10,'#2a2016');
+ s+=navArrow(1183,285,'u');
+ s+=foglayer(300,620,260,60)+foglayer(950,600,300,50,'fog b');
+ s+=vignette();
+ return s;}
+function hotsRoom(){return[
+ HS('room.futon',470,545,245,140,'hs_futon',!F('comb')),
+ HS('room.ball',820,610,80,75,'hs_ball'),
+ HS('room.shelf',210,300,150,95,'hs_shelf'),
+ HS('room.scroll',325,145,160,265,'hs_scroll',!F('tz1')),
+ HS('room.win',688,148,175,165,'hs_win'),
+ HS('room.out',1135,300,145,420,'hs_roomout'),
+];}
+/* ---- 2. corridor ---- */
+function artCor(){let s=roomBase({bw:'#171d2e',sw:'#111624'});
+ s+=R(0,90,1280,16,'#241a10')+P('M0 0 L1280 0 L1080 110 L200 110 Z','#0e121d');
+ s+=P('M0 720 L200 560 L1080 560 L1280 720 Z','#20263a');
+ for(let i=0;i<6;i++)s+=LN(i*256,720,200+i*136,560,'#161b2b',3);
+ s+=doorway(30,250,150,310,'#101625');
+ s+=R(45,250,120,310,'url(#patShoji)','opacity=".7"')+R(30,250,150,310,'none','stroke="#241a10" stroke-width="8"');
+ s+=`<g fill="#3a2c1a" font-size="18" font-family="serif" text-anchor="middle">${LT(105,225,'離坐の部屋')}</g>`;
+ [[240,'風呂'],[450,'便所'],[660,'広間'],[870,'床の間']].forEach(function(p){const x=p[0],n=p[1];
+  s+=doorway(x,250,150,310,'#101625');
+  s+=R(x+25,180,100,46,'#d8cfb4')+`<g fill="#3a2c1a" font-size="22" font-family="serif" text-anchor="middle">${LT(x+75,212,n)}</g>`;});
+ s+=R(1040,230,180,330,'#0a0e18');
+ s+=R(1046,236,120,318,'#38445f')+`<rect x="1046" y="236" width="120" height="318" fill="url(#patShoji)" opacity=".7"/>`;
+ s+=R(1040,230,180,330,'none','stroke="#241a10" stroke-width="8"');
+ s+=navArrow(1115,395,'r');
+ s+=R(215,116,120,26,'#0a0e18')+R(215,116,120,26,'none','stroke="#3a2c1a" stroke-width="4"');
+ s+=LN(275,142,275,240,'#8a7a5a',2)+C(275,246,7,'#c9b075');
+ s+=navArrow(275,170,'u');
+ s+=R(540,140,220,80,'#3a2c1a')+R(548,148,204,64,'#2a2016');
+ s+=`<g fill="#d8cfb4" font-family="serif" text-anchor="middle">${LT(650,175,'月 影 亭','font-size="26"')}${LT(650,200,'\u2014 \u660e\u6cbb\u5341\u4e5d\u5e74 \u2014','font-size="13"')}</g>`;
+ s+=chochin(420,150,56,84,F('lamp'));
+ s+=chochin(790,150,56,84,F('lamp'));
+ if(F('lamp')){s+=C(420,190,180,'url(#gLamp)')+C(790,190,180,'url(#gLamp)')+R(200,120,880,440,'#ffb45e','opacity=".05"');}
+ if(!F('candle')){s+=R(1000,330,86,10,'#3a2c1a')+R(1014,290,10,40,'#e8e4d5')+C(1019,286,4,'#5a4a30');}
+ else{s+=R(1000,330,86,10,'#3a2c1a');}
+ s+=`<g stroke="#5d6a86" stroke-width="1" opacity=".5" fill="none"><path d="M0 40 Q60 60 100 120 M0 70 Q50 80 80 130 M0 100 Q40 100 60 140 M20 0 Q60 40 60 140 M50 0 Q80 30 100 120"/></g>`;
+ s+=G('class="bob"',LN(60,140,60,205,'#5d6a86',1)+C(60,212,7,'#141821')+C(60,222,5,'#141821')+`<g stroke="#141821" stroke-width="1.6"><path d="M53 210 l-8 -6 M52 218 l-9 0 M54 226 l-7 7 M67 210 l8 -6 M68 218 l9 0 M66 226 l7 7"/></g>`);
+ s+=foglayer(560,600,340,60)+foglayer(180,560,220,50,'fog b');
+ if(!F('lamp'))s+=R(0,0,1280,720,'#05070f','opacity=".35"');
+ s+=vignette();
+ return s;}
+function hotsCor(){return[
+ HS('cor.room',30,250,150,310,'hs_droom'),
+ HS('cor.bath',240,250,150,310,'hs_dbath'),
+ HS('cor.toi',450,250,150,310,'hs_dtoi'),
+ HS('cor.din',660,250,150,310,'hs_ddin'),
+ HS('cor.tok',870,250,150,310,'hs_dtok'),
+ HS('cor.hatch',215,116,120,140,'hs_stairs',!F('attLight')),
+ HS('cor.gar',1040,230,185,330,'hs_togar'),
+ HS('cor.lamp',360,140,130,120,'hs_lamp',F('candle')&&!F('lit')),
+ HS('cor.candle',998,275,92,70,'hs_candle',!F('candle')),
+ HS('cor.spider',40,140,45,100,'hs_spider'),
+ HS('cor.sign',538,138,225,85,'hs_sign'),
+];}
+/* ---- 3. vanity room ---- */
+function artBath(){let s=roomBase({bw:'url(#patTile)',sw:'#182338',ce:'#121a2c'});
+ s+=P('M0 720 L200 560 L1080 560 L1280 720 Z','#33415e');
+ for(let i=0;i<7;i++)s+=LN(i*200,720,200+i*125,560,'#28344c',2);
+ s+=EL(640,300,145,185,'#3a2c1a')+EL(640,300,128,168,'#1b2536');
+ s+=EL(600,250,40,70,'#26334a','opacity=".8"');
+ if(!F('frost')){s+=EL(640,300,120,160,'#9fb0c8','opacity=".18" filter="url(#soft)"');}
+ if(F('frost')){s+=`<g fill="#cfe0f5" font-size="46" font-family="serif" text-anchor="middle" opacity=".9">${LT(640,290,'\u4e09 \u00b7 \u4e94 \u00b7 \u516b')}</g>`+`<g fill="#9db8d8" font-size="16" text-anchor="middle">${LT(640,330,'\u93e1\u306b\u7720\u308b / asleep in the mirror')}</g>`;}
+ if(F('lit')&&!F('frost')){s+=EL(640,300,135,175,'none','stroke="#e8d9a0" stroke-width="2" stroke-dasharray="8 8" opacity=".55" class="pulse"');}
+ s+=R(210,420,200,16,'#4a3626')+R(225,436,14,130,'#3a2a1c')+R(380,436,14,130,'#3a2a1c');
+ s+=R(240,340,140,84,'#5a4028')+R(248,348,124,68,'#4a3626');
+ s+=F('box')?R(252,404,116,26,'#2a1e14'):R(252,404,116,26,'#6a4c30')+C(310,417,7,'#c9b075')+P('M306 417 h8 M310 413 v8','none','stroke="#241a10" stroke-width="2"');
+ s+=R(950,330,120,10,'#4a3626')+R(965,340,10,50,'#3a2a1c')+R(1045,340,10,50,'#3a2a1c');
+ s+=`<path d="M985 270 h50 l-6 62 h-38 z" fill="#cfd6e2"/><rect x="982" y="256" width="56" height="16" rx="4" fill="#8c4a3a"/>`+(F('salt')?'':`<g fill="#fff" opacity=".85"><circle cx="1002" cy="290" r="2"/><circle cx="1016" cy="300" r="2"/><circle cx="1010" cy="312" r="2"/></g>`);
+ s+=R(700,560,380,130,'#5a4028')+R(712,572,356,100,'#1e2a44');
+ s+=`<g class="mist" fill="#dfe6f2"><ellipse cx="770" cy="545" rx="40" ry="16" opacity=".2"/><ellipse cx="880" cy="530" rx="55" ry="18" opacity=".16"/><ellipse cx="1000" cy="545" rx="38" ry="14" opacity=".2"/></g>`;
+ s+=EL(560,660,50,26,'#101624')+LN(520,655,600,655,'#33415e',3)+LN(522,665,598,665,'#33415e',3)+C(560,660,5,'#cfe0f5','opacity=".7"');
+ s+=R(30,240,130,300,'#101625')+R(30,240,130,300,'none','stroke="#3a2a1c" stroke-width="6"');
+ s+=navArrow(120,390,'l');
+ s+=R(45,120,140,105,'#2c3a56');
+ if(F('face1')&&!F('face2')){s+=EL(115,168,38,48,'#dfe4ee','opacity=".85"')+C(102,158,6,'#12161f')+C(128,158,6,'#12161f')+P('M100 190 q15 10 30 0','none','stroke="#12161f" stroke-width="3"');}
+ if(F('face2')){s+=LN(95,140,95,190,'#9fb0c8',2)+LN(110,145,110,195,'#9fb0c8',2)+LN(125,140,125,188,'#9fb0c8',2)+LN(140,145,140,185,'#9fb0c8',2);}
+ s+=R(45,120,140,105,'none','stroke="#241a10" stroke-width="6"');
+ s+=foglayer(400,600,260,50);
+ s+=vignette();
+ return s;}
+function hotsBath(){return[
+ HS('bath.mirror',505,130,270,320,'hs_mirror',F('lit')&&!F('frost')),
+ HS('bath.vanity',235,335,150,110,'hs_vanity',!F('box')&&F('comb')),
+ HS('bath.salt',975,250,72,95,'hs_salt',!F('salt')),
+ HS('bath.tub',698,555,385,140,'hs_bath'),
+ HS('bath.drain',510,632,100,58,'hs_drain'),
+ HS('bath.win',43,118,145,110,'hs_bwin',!F('face2')),
+ HS('bath.out',28,240,135,300,'hs_bathout'),
+];}
+/* ---- 4. latrine ---- */
+function artToi(){let s=roomBase({bw:'#2c3348',sw:'#20263a',ce:'#171d2c'});
+ s+=P('M0 720 L200 560 L1080 560 L1280 720 Z','#39415a');
+ for(let i=0;i<8;i++)s+=LN(i*190,720,200+i*110,560,'#313a52',2);
+ [[280,'\u58f1'],[470,'\u5f10'],[660,'\u53c2']].forEach(function(p){const x=p[0],n=p[1];
+  s+=doorway(x,250,120,310,'#1a2030');
+  s+=R(x+35,170,50,44,'#d8cfb4')+`<g fill="#3a2c1a" font-size="20" font-family="serif" text-anchor="middle">${LT(x+60,200,n)}</g>`;
+  s+=R(x+20,300,80,8,'#313a52');});
+ s+=P('M660 250 L672 250 L672 560 L660 560 Z','#04060c');
+ s+=`<g stroke="#5d6a86" stroke-width="1" opacity=".55" fill="none"><path d="M660 250 Q700 300 780 260 M660 290 Q710 320 760 300 M690 250 Q700 300 700 330"/></g>`;
+ if(F('knock')&&!F('calm')){
+  s+=EL(530,210,60,44,'#31415e')+EL(530,215,34,34,'#a04a44','opacity=".55"')+C(519,210,4,'#12161f')+C(541,210,4,'#12161f')+P('M518 228 q12 8 24 0','none','stroke="#12161f" stroke-width="3"');
+  s+=P('M470 300 l0 26 M590 300 l0 26','none','stroke="#c3403a" stroke-width="3"');}
+ s+=`<g opacity=".75" transform="translate(150,240) rotate(90)"><text x="-90" y="8" font-size="21" font-family="serif" fill="#8a94ac">\u30cf\u30ca\u30b3\u3055\u3093 \u4e09\u756a\u76ee</text></g>`;
+ s+=R(1080,240,120,90,'#2c3a56')+`<rect x="1080" y="240" width="120" height="90" fill="url(#patShoji)" opacity=".6"/>`+R(1080,240,120,90,'none','stroke="#241a10" stroke-width="5"');
+ s+=C(1140,300,10,'#c8506a')+C(1140,282,7,'#c8506a')+C(1140,318,7,'#c8506a')+C(1122,300,7,'#c8506a')+C(1158,300,7,'#c8506a')+C(1140,300,5,'#e8d9a0');
+ s+=R(1120,420,120,16,'#5a6a86')+R(1150,436,14,110,'#39415a')+R(1200,436,14,110,'#39415a');
+ s+=R(20,280,120,280,'#1a2030')+R(20,280,120,280,'none','stroke="#3a2c1a" stroke-width="6"');
+ s+=navArrow(90,420,'l');
+ s+=foglayer(760,560,200,40,'fog b');
+ s+=vignette();
+ return s;}
+function hotsToi(){return[
+ HS('toi.s1',280,250,120,310,'hs_s1'),
+ HS('toi.s2',470,250,120,310,'hs_s2',!F('match')),
+ HS('toi.s3',660,250,120,310,'hs_s3',!F('tz3')),
+ HS('toi.knock',470,165,120,80,'hs_knock',F('knock')&&!F('calm')),
+ HS('toi.graff',40,220,80,150,'hs_graff'),
+ HS('toi.win',1078,238,125,95,'hs_twin'),
+ HS('toi.out',18,280,125,280,'hs_toiout'),
+];}
+/* ---- 5. parlor ---- */
+const PLATES=[[470,565,24],[560,592,30],[655,568,22],[745,596,32],[518,632,28],[628,652,21],[732,646,34],[828,600,26],[884,652,30]];
+function artDin(){let s=roomBase({bw:'#1c2338',sw:'#151b2c'});
+ s+=tatamiFloor();
+ s+=moon(640,235,36);
+ s+=R(470,150,340,330,'rgba(61,77,110,.5)')+`<rect x="470" y="150" width="340" height="330" fill="url(#patShoji)" opacity=".85"/>`+R(470,150,340,330,'none','stroke="#241a10" stroke-width="8"');
+ s+=P('M470 480 L560 560 L740 560 L810 480 Z','rgba(200,220,255,.05)');
+ s+=chochin(300,140,52,80,true)+C(300,190,120,'url(#gLamp)');
+ s+=P('M380 610 L430 530 L900 530 L850 610 Z','#5a4028');
+ s+=P('M380 610 L850 610 L850 626 L380 626 Z','#3a2a1c');
+ s+=R(400,610,16,70,'#3a2a1c')+R(830,610,16,70,'#3a2a1c');
+ if(!F('tz4'))s+=P('M412 632 l40 -6 6 14 -40 6 z','#d8cfb4');
+ PLATES.forEach(function(p,i){s+=plateSvg(p[0],p[1],p[2],false);
+  if(F('p'+(i+1)))s+=C(p[0],p[1]-p[2]-12,5,'#e0b64b');});
+ s+=R(230,600,130,12,'#3a2c1a')+R(240,612,12,60,'#2a2016')+R(338,612,12,60,'#2a2016');
+ if(!F('fish')){s+=EL(295,585,55,32,'#8c6a44')+EL(295,578,45,24,'#a5825a')+C(295,560,8,'#c9b075');}
+ else{s+=EL(295,590,50,8,'#2a2016');}
+ s+=R(1010,240,150,330,'#3a2a1c')+R(1022,252,126,190,'#241a10');
+ s+=moon(1085,340,52);
+ if(F('clockOpen')){s+=P('M1040 310 l30 40 M1085 290 l-14 60 M1120 320 l-26 26','none','stroke="#1a1a24" stroke-width="2.5"');
+  s+=P('M1136 252 l24 0 0 190 -24 0 z','none','stroke="#5a4028" stroke-width="4"');
+  if(!F('plate10'))s+=plateSvg(1160,470,26,true)+C(1160,432,10,'#e8d9a0','class="pulse"');}
+ else{s+=LN(1085,340,1085,300,'#1a1a24',3)+LN(1085,340,1115,340,'#1a1a24',3);}
+ s+=R(1022,452,126,106,'#241a10');
+ s+=R(1120,270,140,290,'#101625')+R(1120,270,140,290,'none','stroke="#3a2a1c" stroke-width="6"');
+ s+=navArrow(1190,415,'r');
+ s+=foglayer(640,640,300,50);
+ s+=vignette();
+ return s;}
+function hotsDin(){const h=[];
+ PLATES.forEach(function(p,i){if(!F('p'+(i+1)))h.push(HS('din.p'+(i+1),p[0]-p[2]-10,p[1]-p[2]-6,p[2]*2+20,p[2]*2+16,'hs_platek',true));});
+ const all9=cnt9()>=9;
+ h.push(HS('din.clock',1008,240,155,340,'hs_clock',all9&&!F('clockOpen')));
+ if(F('clockOpen')&&!F('plate10'))h.push(HS('din.plate10',1128,430,64,70,'hs_clock',true));
+ h.push(HS('din.paper',400,616,70,40,'hs_table',!F('tz4')));
+ h.push(HS('din.dish',230,545,140,80,'hs_dish',!F('fish')));
+ h.push(HS('din.out',1118,270,145,290,'hs_dout'));
+ return h;}
+/* ---- 6. alcove room ---- */
+function dollDir(i,def){return S.fl['d'+i]!==undefined?+S.fl['d'+i]:def;}
+function artTok(){let s=roomBase({bw:'#1e2438',sw:'#161c2e'});
+ s+=tatamiFloor();
+ s+=R(40,150,200,330,'url(#gSnow)');
+ s+=C(120,220,52,'url(#gMoonB)')+C(120,220,22,'#e6ebf4');
+ s+=ghostFig(160,470,0.5,false);
+ s+=`<rect x="40" y="150" width="200" height="330" fill="url(#patShoji)" opacity=".55"/>`+R(40,150,200,330,'none','stroke="#241a10" stroke-width="8"');
+ s+=snowfall(26);
+ s+=R(700,120,380,440,'#12182a')+R(700,120,380,16,'#3a2c1a')+R(700,120,14,440,'#3a2c1a')+R(1066,120,14,440,'#3a2c1a');
+ s+=R(714,140,352,420,'#20293f');
+ s+=R(790,150,150,270,'#d8cfb4')+R(782,144,166,10,'#3a2c1a')+R(782,420,166,12,'#3a2c1a');
+ s+=P('M820 400 q26 -120 45 -160 q20 40 45 160 z','#e8ecf5');
+ s+=P('M845 240 q20 -46 40 0 l-6 34 q-14 12 -28 0 z','#dfe4ee');
+ s+=C(865,225,26,'#e8dcc8');
+ s+=P('M839 224 q-8 -30 10 -34 q16 -4 26 10 q-24 -8 -30 12 z','#141821');
+ s+=P('M891 226 q8 -30 -8 -36 q20 6 18 26 z','#141821');
+ if(F('eyesSeen')){s+=EL(855,222,5,7,'#12161f')+EL(876,222,5,7,'#12161f')+P('M850 214 l12 3 M881 214 l-12 3','none','stroke="#7a1f1a" stroke-width="2"');}
+ else{s+=P('M849 222 l14 0 M870 222 l14 0','none','stroke="#8a7a5a" stroke-width="2"');}
+ s+=P('M845 262 q20 26 40 0','none','stroke="#7a1f1a" stroke-width="2" opacity=".7"');
+ if(F('dolls')&&!F('alcove')){s+=R(760,520,260,30,'#0a0e18')+P('M760 520 l260 0 0 -8 -260 0 z','#39415a');
+  s+=P('M800 538 q30 -12 60 0 l-6 14 -50 0 z','#c9a15f')+P('M900 540 l40 -4 4 12 -40 4 z','#d8cfb4');}
+ if(F('alcove')){s+=R(760,520,260,26,'#0a0e18');}
+ s+=dollArt(770,0,1)+dollArt(880,1,2)+dollArt(990,2,0);
+ s+=G('class="sway"','<g transform="translate(330,470)"><path d="M-40 60 q-30 -50 6 -78 q34 -20 52 8 q14 34 -18 70 z" fill="#5a4028"/><rect x="30" y="-60" width="10" height="70" fill="#3a2c1a" transform="rotate(28 30 -25)"/><g stroke="#c9b075" stroke-width="1"><path d="M-20 -20 l20 60 M-8 -26 l20 60 M4 -30 l20 60"/></g></g>');
+ s+=chochin(560,150,46,70,true)+C(560,200,90,'url(#gLamp)');
+ s+=R(15,300,120,260,'#101625')+R(15,300,120,260,'none','stroke="#3a2a1c" stroke-width="6"');
+ s+=navArrow(78,430,'l');
+ s+=foglayer(900,640,240,40);
+ s+=vignette();
+ return s;}
+function dollArt(x,i,def){const d=dollDir(i,def);
+ let g=`<g transform="translate(${x},500)">`;
+ g+=P('M-24 100 l10 -70 h28 l10 70 z',['#8c4a3a','#c8b075','#3d5a94'][i]);
+ g+=P('M-14 40 h28 l-4 16 h-20 z','#e8e4d5');
+ g+=C(0,20,17,'#e8dcc8');
+ g+=P('M-17 16 q-2 -22 17 -22 q19 0 17 22 q-17 -10 -34 0 z','#141821');
+ if(d===1){g+=C(-6,20,2.4,'#12161f')+C(6,20,2.4,'#12161f');}
+ else if(d===0){g+=C(-9,20,2.4,'#12161f')+C(-2,20,2.4,'#12161f');}
+ else{g+=C(9,20,2.4,'#12161f')+C(2,20,2.4,'#12161f');}
+ g+='</g>';return g;}
+function hotsTok(){return[
+ HS('tok.d0',740,480,64,130,'hs_doll0',!F('dolls')),
+ HS('tok.d1',850,480,64,130,'hs_doll1',!F('dolls')),
+ HS('tok.d2',960,480,64,130,'hs_doll2',!F('dolls')),
+ HS('tok.scroll',788,145,155,280,'hs_ascroll',F('diary')&&!F('eyesSeen')),
+ HS('tok.biwa',280,450,120,110,'hs_biwa'),
+ HS('tok.alcove',755,505,270,60,'hs_alcove',F('dolls')&&!F('alcove')),
+ HS('tok.win',38,148,205,335,'hs_tokwin'),
+ HS('tok.out',13,300,125,260,'hs_tokout'),
+];}
+/* ---- 7. attic ---- */
+function artAtt(){if(!F('lit')){let s=roomBase({bw:'#0c101c',sw:'#090c15',ce:'#080b12'});
+ s+=P('M0 720 L200 560 L1080 560 L1280 720 Z','#0b0f19');
+ s+=P('M980 0 L1040 0 L560 560 L500 560 Z','#131a2a','opacity=".5"');
+ s+=R(312,300,10,420,'#2a2016')+R(408,300,10,420,'#2a2016');
+ for(let i=0;i<6;i++)s+=R(312,330+i*66,106,8,'#241a10');
+ s+=R(300,560,130,160,'#05070d')+R(300,560,130,160,'none','stroke="#2a2016" stroke-width="5"');
+ s+=navArrow(365,590,'d');
+ s+=R(0,0,1280,720,'#04060b','opacity=".82"');
+ return s;}
+ let s=roomBase({bw:'#1b2134',sw:'#141a2a'});
+ s+=P('M0 720 L200 560 L1080 560 L1280 720 Z','#262c40');
+ s+=P('M0 0 L1280 0 L1080 120 L200 120 Z','#141827');
+ s+=P('M100 0 L300 160 L320 160 L120 0 Z','#2a2016')+P('M1180 0 L980 160 L960 160 L1160 0 Z','#2a2016');
+ s+=R(0,150,1280,12,'#241a10','opacity=".85"');
+ s+=C(1140,190,42,'#e6ebf4')+C(1140,190,70,'none','stroke="#241a10" stroke-width="14"');
+ s+=P('M1000 260 L1120 240 L640 560 L520 580 Z','#cfe0ff','opacity=".07"');
+ s+=`<g stroke="#5d6a86" stroke-width="1" opacity=".5" fill="none"><path d="M200 130 Q320 160 420 140 M200 170 Q300 190 360 180 M260 130 Q280 180 285 210"/></g>`;
+ s+=R(312,300,10,420,'#3a2c1a')+R(408,300,10,420,'#3a2c1a');
+ for(let i=0;i<6;i++)s+=R(312,330+i*66,106,8,'#2a2016');
+ s+=R(300,560,130,160,'#05070d')+R(300,560,130,160,'none','stroke="#2a2016" stroke-width="5"');
+ s+=navArrow(365,590,'d');
+ s+=C(700,470,130,'url(#gLamp)');
+ s+=R(640,470,260,130,'#5a4028');
+ if(F('trunk')){s+=R(640,450,260,22,'#6a4c30')+R(650,492,240,90,'#161019');
+  if(!F('diary'))s+=R(700,530,60,44,'#d8cdb2')+R(700,530,12,44,'#8c4a3a');}
+ else{s+=R(640,470,260,26,'#4a3626')+R(760,480,30,26,'#c9b075')+R(766,470,18,10,'#8a7a5a');}
+ s+=R(150,300,12,270,'#3a2c1a')+R(300,300,12,270,'#3a2c1a')+R(140,560,180,14,'#3a2c1a');
+ s+=R(160,180,140,390,'#3a2c1a')+R(170,190,120,368,'#22304a');
+ if(S.stare>=1){s+=ghostFig(230,470,0.5,S.stare>=2);}
+ if(F('freed')){s+=P('M200 210 l30 90 -18 60 34 120','none','stroke="#9fc3e8" stroke-width="2.5"')+P('M230 300 l-20 40','none','stroke="#9fc3e8" stroke-width="2"');
+  if(!F('shard'))s+=P('M242 432 l42 12 -14 32 -30 -18 z','#9fc3e8','opacity=".85"');}
+ s+=R(470,500,140,100,'#4a3626')+R(470,500,140,16,'#3a2c1a');
+ s+=EL(505,486,16,12,'#d8cfb4')+EL(540,482,16,12,'#d8cfb4','opacity=".8"')+EL(575,486,16,12,'#d8cfb4','opacity=".6"');
+ s+=R(1150,600,90,60,'#0b0f19')+C(1180,620,3.4,'#e8d9a0')+C(1196,620,3.4,'#e8d9a0');
+ s+=C(120,660,90,'url(#gLamp)');
+ s+=foglayer(760,620,240,44,'fog b');
+ s+=vignette();
+ return s;}
+function hotsAtt(){if(!F('lit'))return[HS('att.ladder',300,540,140,170,'hs_aladder')];
+ return[
+ HS('att.ladder',300,540,140,170,'hs_aladder'),
+ HS('att.trunk',640,455,265,150,'hs_trunk',F('hairpin')&&!F('trunk')),
+ HS('att.mirror',158,178,146,400,'hs_amirror',!F('shard')),
+ HS('att.box',468,478,145,125,'hs_abox'),
+ HS('att.rat',1148,595,95,68,'hs_arat'),
+];}
+/* ---- 8. courtyard ---- */
+function artGar(){let s=R(0,0,1280,720,'#0d1326');
+ s+=moon(1090,110,44);
+ s+=foglayer(300,90,300,60)+foglayer(800,60,260,50,'fog b');
+ s+=P('M0 330 L1280 330 L1280 356 L0 356 Z','#161c2c');
+ for(let i=0;i<22;i++)s+=LN(i*60,330,i*60+26,356,'#0e1322',3);
+ s+=R(0,356,1280,210,'#3a3f52');
+ for(let i=0;i<8;i++)s+=LN(0,386+i*28,1280,386+i*28,'#31364a',2);
+ s+=R(0,356,1280,8,'#22283a');
+ s+=P('M0 566 L1280 566 L1280 720 L0 720 Z','url(#gSnow)');
+ for(let i=0;i<9;i++)s+=EL(90+i*140,660+(i%3)*16,44,14,'#c8d2e2','opacity=".5"');
+ for(let i=0;i<5;i++)s+=EL(560+i*70,600+i*18,10,5,'#8fa3bd','opacity=".18"');
+ s+=R(0,380,116,190,'#241a10')+R(8,388,100,174,'#38445f')+`<rect x="8" y="388" width="100" height="174" fill="url(#patShoji)" opacity=".75"/>`+R(0,380,116,190,'none','stroke="#141a2a" stroke-width="6"');
+ s+=C(60,470,80,'url(#gLamp)')+navArrow(70,300,'l');
+ s+=P('M140 560 L150 300 L170 300 L180 560 Z','#3a2c1a')+P('M150 300 L160 200 L170 300 Z','#3a2c1a');
+ s+=P('M60 340 q80 -30 160 -6 q-70 26 -160 6 z','#20362c')+EL(140,318,70,16,'#e8eef8','opacity=".75"');
+ s+=P('M170 420 q90 -26 170 -4 q-80 24 -170 4 z','#20362c')+EL(255,404,72,15,'#e8eef8','opacity=".75"');
+ s+=P('M40 470 q80 -22 150 -4 q-70 20 -150 4 z','#20362c')+EL(115,458,62,13,'#e8eef8','opacity=".75"');
+ s+=R(430,505,54,60,'#525a70')+R(414,470,86,40,'#5a647e')+R(402,420,110,54,'#4a5266')+P('M396 424 L518 424 L458 380 Z','#39415a')+C(457,368,8,'#5a647e');
+ s+=R(444,478,26,24,'#0a0e18')+ifGlance();
+ if(!F('tz6'))s+=R(444,478,26,24,'none','stroke="#e8d9a0" stroke-width="2" class="pulse"');
+ s+=EL(620,616,74,30,'#525a70')+EL(620,608,56,20,'#0e1626')+C(620,606,30,'#16233c');
+ s+=EL(960,540,160,84,'#4a5266');
+ for(let i=0;i<10;i++){const a=i*Math.PI/5;s+=EL(960+Math.cos(a)*140,540+Math.sin(a)*66,22,13,'#39415a');}
+ s+=EL(960,532,104,52,'#02040a');
+ s+=P('M870 500 q-30 -60 10 -110 q-40 40 -20 110 z','#0b0e16','opacity=".8"');
+ s+=R(840,300,14,240,'#3a2c1a')+R(1070,300,14,240,'#3a2c1a')+R(826,286,272,16,'#2a2016');
+ s+=P('M806 286 L1118 286 L1064 240 L860 240 Z','#1c2233');
+ for(let i=0;i<6;i++)s+=LN(860+i*40,240,846+i*44,286,'#0e1322',3);
+ s+=C(960,296,10,'#2a2016')+LN(1044,296,1044,430,'#8a7a5a',2);
+ s+=`<path d="M1024 430 h40 l-6 44 h-28 z" fill="#6a4c30"/>`+LN(1024,440,1064,440,'#4a3626',3)+LN(1026,458,1062,458,'#4a3626',3);
+ if(!F('storeOpen')){
+  s+=R(150,392,150,172,'#241a10')+R(158,400,134,156,'#31281c');
+  s+=C(225,470,34,'#5a5240')+C(225,470,26,'#3a3428');
+  [ [190,440,0],[225,440,1],[260,440,2] ].forEach(function(p){s+=C(p[0],p[1],13,'#4a4436')+C(p[0],p[1],13,'none','stroke="#241a10" stroke-width="2"')+LN(p[0],p[1]-13,p[0],p[1]-8,'#c9b075',2)+`<text x="${p[0]}" y="${p[1]+5}" font-size="12" fill="#e8d9a0" text-anchor="middle">${S.dial[p[2]]}</text>`;});
+ }else{s+=R(150,392,150,172,'#05070d')+R(150,392,150,172,'none','stroke="#241a10" stroke-width="6"')+R(288,398,52,160,'#31281c','transform="rotate(14 300 470)"');}
+ s+=R(1010,330,220,236,'#241a10')+R(1018,338,98,220,'#31281c')+R(1124,338,98,220,'#31281c');
+ s+=R(1010,352,220,14,'#141a2a')+R(1010,452,220,14,'#141a2a')+LN(1120,338,1120,558,'#0a0e18',5);
+ if(F('chainOpen')){s+=`<path d="M1030 390 q-6 60 10 120 q-14 10 -30 6" fill="none" stroke="#5d6a86" stroke-width="6"/>`+R(990,548,26,14,'#5d6a86');}
+ else{s+=`<path d="M1014 380 q104 26 212 0 M1014 402 q104 26 212 0 M1014 424 q104 26 212 0" fill="none" stroke="#5d6a86" stroke-width="6"/>`+R(1104,376,32,42,'#6a6a72')+P('M1110 376 q10 -18 20 0','none','stroke="#8a8a94" stroke-width="5"');}
+ if(!F('sPaper')){s+=R(1188,352,26,84,'#e4e6ec')+R(1192,358,18,72,'none','stroke="#8c2a24" stroke-width="2"')+`<text x="1201" y="404" font-size="20" fill="#7a1f1a" text-anchor="middle">\u6b62</text>`;}
+ else{s+=R(1190,430,22,6,'#5a5240','opacity=".6"');}
+ if(!F('sIron')){s+=R(1180,458,44,30,'#5a647e')+`<text x="1202" y="480" font-size="17" fill="#16203a" text-anchor="middle">\u5c01</text>`;}
+ else{s+=C(1202,472,7,'#0a0e18');}
+ if(!F('sName')){s+=R(1188,500,26,50,'#d8cfb4')+`<text x="1201" y="530" font-size="13" fill="#8a7a5a" text-anchor="middle">\u540d</text>`;}
+ else{s+=LN(1192,520,1210,516,'#8a7a5a',1.5,'opacity=".7"');}
+ if(!F('catDone')){s+=G('class="bob"',`<g transform="translate(330,545)"><path d="M-34 26 q-14 -30 8 -36 q10 -26 34 -14 q22 -2 26 20 q4 20 -14 30 z" fill="#10131c"/><path d="M-10 -24 l4 -14 8 10 M10 -26 l8 -12 4 14" fill="#10131c"/><path d="M-36 22 q-24 6 -26 -18" fill="none" stroke="#10131c" stroke-width="6"/><g fill="#e8c85a"><circle cx="6" cy="-8" r="2.6"/><circle cx="18" cy="-8" r="2.6"/></g><path d="M6 -4 q6 6 12 0" fill="none" stroke="#4a4436" stroke-width="1.4"/></g>`);}
+ else{s+=R(250,545,44,22,'#39415a')+R(246,538,52,8,'#22283a')+R(258,551,30,12,'#141a2a');
+  if(!F('stone'))s+=R(246,536,52,26,'none','stroke="#e8d9a0" stroke-width="2" class="pulse"');}
+ s+=snowfall(46);
+ s+=vignette();
+ return s;}
+function ifGlance(){return '';}
+function hotsGar(){return[
+ HS('gar.cor',0,380,118,190,'hs_cordoor'),
+ HS('gar.pine',40,190,300,290,'hs_pine'),
+ HS('gar.lantern',396,376,122,192,'hs_lantern2',!F('tz6')),
+ HS('gar.tsukubai',546,576,148,74,'hs_tsukubai'),
+ HS('gar.store',150,392,150,172,'hs_store',F('frost')&&!F('storeOpen')),
+ HS('gar.well',820,240,286,320,'hs_well',!F('wellDone')),
+ HS('gar.gate',1008,330,224,236,'hs_gate',F('gotKey')&&!F('chainOpen')),
+ HS('gar.cat',290,500,120,80,'hs_cat',!F('catDone')&&has('fish')),
+ HS('gar.stone',242,532,60,40,'hs_stone',F('catDone')&&!F('stone')),
+];}
+/* ---- 9. well ---- */
+function artWell(){let s=R(0,0,1280,720,'#0a0f1e');
+ s+=moon(190,110,38);
+ s+=R(0,330,1280,30,'#161c2c');
+ s+=R(0,360,1280,200,'#333a4e');
+ s+=P('M0 560 L1280 560 L1280 720 L0 720 Z','#2c3346');
+ s+=R(498,140,14,420,'#3a2c1a')+R(908,140,14,420,'#3a2c1a');
+ s+=R(470,120,480,22,'#2a2016')+P('M440 120 L980 120 L900 60 L520 60 Z','#1c2233');
+ for(let i=0;i<7;i++)s+=LN(520+i*56,60,498+i*66,120,'#0e1322',3);
+ s+=C(690,132,11,'#2a2016')+LN(690,143,690,330,'#8a7a5a',2);
+ s+=LN(902,132,902,430,'#8a7a5a',2);
+ s+=`<path d="M878 430 h48 l-8 54 h-32 z" fill="#6a4c30"/>`+LN(880,442,924,442,'#4a3626',3)+LN(882,462,922,462,'#4a3626',3);
+ s+=EL(690,540,220,110,'#4a5266');
+ for(let i=0;i<12;i++){const a=i*Math.PI/6;s+=EL(690+Math.cos(a)*192,540+Math.sin(a)*92,30,17,'#39415a');}
+ s+=EL(690,528,150,72,'#02040a');
+ s+=P('M560 500 q-20 -80 30 -130 q-30 60 -10 130 z','#0b0e16')+P('M820 505 q30 -70 0 -130 q30 66 12 132 z','#0b0e16')+P('M600 520 q90 40 190 4 q-80 60 -190 20 z','#0b0e16','opacity=".7"');
+ if(!F('wellDone')){s+=ghostFig(330,600,1.25,F('turned'));
+  s+=P('M280 480 q-14 -140 50 -190 q-30 110 -18 192 z','#0b0e16');}
+ else{s+=LN(560,545,640,545,'#e8e4d5',2,'opacity=".5"')+C(600,560,4,'#e8e4d5','opacity=".6"');}
+ s+=foglayer(690,470,220,50)+foglayer(300,620,240,44,'fog b');
+ s+=navArrow(1206,470,'r');
+ s+=vignette();
+ return s;}
+function hotsWell(){const h=[];
+ if(!F('wellDone'))h.push(HS('well.ghost',240,260,200,340,'hs_ghost',true));
+ h.push(HS('well.bucket',866,420,72,72,'hs_bucket'));
+ h.push(HS('well.mouth',560,470,260,120,'hs_wellmouth'));
+ h.push(HS('well.out',1150,380,128,240,'hs_wellout'));
+ return h;}
+/* ---- 10. storehouse ---- */
+function artSou(){let s=roomBase({bw:'#221c14',sw:'#191410',ce:'#120e0a'});
+ s+=P('M0 720 L200 560 L1080 560 L1280 720 Z','#2c2418');
+ for(let i=0;i<7;i++)s+=LN(i*200,720,200+i*125,560,'#221c12',3);
+ s+=R(980,200,100,80,'#0e1322')+`<rect x="980" y="200" width="100" height="80" fill="url(#patShoji)" opacity=".45"/>`+R(980,200,100,80,'none','stroke="#241a10" stroke-width="6"');
+ s+=C(1030,240,110,'rgba(180,200,255,.05)');
+ s+=R(220,300,250,14,'#3a2c1a')+R(220,430,250,14,'#3a2c1a');
+ s+=R(236,314,12,116,'#2a2016')+R(440,314,12,116,'#2a2016');
+ s+=R(250,240,54,56,'#4a3626')+R(330,250,44,46,'#3a2a1c')+R(396,232,48,64,'#4a3626');
+ s+=`<g fill="#8a7a5a"><path d="M280 420 q14 -10 28 0 q-14 12 -28 0z"/><path d="M330 424 q14 -10 28 0 q-14 12 -28 0z"/><path d="M380 420 q14 -10 28 0 q-14 12 -28 0z"/></g>`+LN(260,408,420,408,'#5a4a30',2);
+ if(F('abDone')&&!F('note1'))s+=R(300,340,60,44,'#d8cfb4','class="pulse"');
+ if(F('abDone')&&!F('bell'))s+=G('class="sway"',`<g transform="translate(378,330)"><path d="M0 34 q0 -30 16 -30 q16 0 16 30 z" fill="#e0b64b"/><rect x="-3" y="34" width="38" height="5" rx="2" fill="#b8912f"/><circle cx="16" cy="43" r="4" fill="#b8912f"/></g>`);
+ s+=R(470,220,20,340,'#3a2c1a')+R(810,220,20,340,'#3a2c1a')+R(490,220,320,16,'#4a3626')+R(490,440,320,14,'#4a3626');
+ s+=R(470,540,20,120,'#3a2c1a')+R(810,540,20,120,'#3a2c1a')+R(470,540,360,14,'#3a2c1a');
+ const vals=[+ (S.ab[0]||0),+(S.ab[1]||0),+(S.ab[2]||0)];
+ [560,650,740].forEach(function(x,i){const v=vals[i];
+  s+=LN(x,236,x,440,'#5a4a30',4);
+  s+=EL(x,270,16,10,v>=5?'#c8503c':'#3a2c1a');
+  for(let k=0;k<Math.min(v,9);k++)s+=EL(x,352+k*14,15,9,'#c9b075');
+  s+=C(x,470,13,'#241a10')+`<text x="${x}" y="475" font-size="15" fill="#e8d9a0" text-anchor="middle">${v}</text>`;});
+ s+=LN(500,320,800,320,'#4a3626',5);
+ s+=`<text x="650" y="590" font-size="14" fill="#8a7a5a" text-anchor="middle">\u767e \u00b7 \u5341 \u00b7 \u4e00</text>`;
+ if(S.kasa>=1){s+=G('class="sway"',`<g transform="translate(1090,420)"><circle r="95" fill="#8c4a3a"/><g stroke="#e8e4d5" stroke-width="2">${Array.from({length:10},(_,i)=>{const a=i*Math.PI/5;return `<line x1="0" y1="0" x2="${(Math.cos(a)*95).toFixed(0)}" y2="${(Math.sin(a)*95).toFixed(0)}"/>`;}).join('')}</g><circle r="34" fill="#e8e4d5"/><circle r="20" fill="#12161f"/><circle r="7" fill="#cfe0f5"/><circle cx="6" cy="-8" r="3" fill="#fff"/></g>`);}
+ else{s+=`<g transform="translate(1060,300) rotate(14)"><rect x="0" y="0" width="26" height="300" rx="12" fill="#8c4a3a"/><rect x="0" y="0" width="26" height="40" rx="10" fill="#6a3428"/><g stroke="#5a281e" stroke-width="1"><path d="M4 60 h18 M4 120 h18 M4 180 h18 M4 240 h18"/></g><rect x="8" y="296" width="10" height="26" fill="#3a2c1a"/></g>`;}
+ s+=R(40,620,180,26,'#3a2c1a');
+ s+=P('M60 606 h44 l6 14 h-50z','#8a6a44')+P('M130 606 h44 l6 14 h-50z','#8a6a44');
+ s+=`<g fill="#e8e4d5" opacity=".14"><circle cx="300" cy="180" r="1.6"/><circle cx="520" cy="120" r="1.4"/><circle cx="900" cy="300" r="1.8"/><circle cx="760" cy="160" r="1.3"/><circle cx="1050" cy="420" r="1.5"/><circle cx="420" cy="360" r="1.2"/></g>`;
+ s+=foglayer(650,600,280,50);
+ s+=vignette();
+ return s;}
+function hotsSou(){return[
+ HS('sou.ab2L',522,236,38,210,'hs_abl'),
+ HS('sou.ab2R',560,236,38,210,'hs_abr'),
+ HS('sou.ab1L',612,236,38,210,'hs_abl'),
+ HS('sou.ab1R',650,236,38,210,'hs_abr'),
+ HS('sou.ab0L',702,236,38,210,'hs_abl'),
+ HS('sou.ab0R',740,236,38,210,'hs_abr'),
+ HS('sou.shelf',220,232,252,200,'hs_shelf2'),
+ HS('sou.paper',296,336,68,52,'hs_note',F('abDone')&&!F('note1')),
+ HS('sou.bell',372,296,44,52,'hs_bell',F('abDone')&&!F('bell')),
+ HS('sou.kasa',985,300,215,330,'hs_kasa'),
+ HS('sou.out',1130,360,150,240,'hs_sout'),
+];}
+/* ---- 11. sealed gate ---- */
+function artGen(){let s=R(0,0,1280,720,'#141a28');
+ s+=R(0,0,1280,600,'#2a2e3c');
+ for(let i=0;i<10;i++)s+=LN(0,60+i*56,1280,60+i*56,'#22262f',2);
+ s+=R(0,600,1280,120,'#26293a');
+ for(let i=0;i<8;i++)s+=LN(i*180,600,i*180+40,720,'#1c1f2c',3);
+ s+=R(290,40,70,580,'#2a2016')+R(920,40,70,580,'#2a2016');
+ s+=R(270,40,740,70,'#3a2c1a')+P('M240 40 L1040 40 L980 0 L300 0 Z','#1c2233');
+ s+=`<g fill="#d8cfb4" font-size="26" font-family="serif" text-anchor="middle">${LT(640,90,'\u6708 \u5f71 \u4ead \u901a \u7528 \u53e3')}</g>`;
+ s+=R(360,110,268,490,'#3a2c1a')+R(652,110,268,490,'#3a2c1a');
+ for(let i=0;i<6;i++){s+=LN(392+i*44,110,392+i*44,600,'#2a2016',3)+LN(684+i*44,110,684+i*44,600,'#2a2016',3);}
+ s+=R(360,170,560,22,'#141a2a')+R(360,330,560,22,'#141a2a')+R(360,470,560,22,'#141a2a');
+ s+=LN(628,110,628,600,'#04060c',8);
+ s+=C(560,300,20,'none','stroke="#8a7a5a" stroke-width="5"')+C(560,300,3,'none','stroke="#8a7a5a" stroke-width="3');
+ if(F('chainOpen')){s+=`<path d="M400 380 q-8 70 12 130 q-16 12 -34 8" fill="none" stroke="#5d6a86" stroke-width="7"/>`+R(368,570,34,18,'#6a6a72');}
+ else{s+=`<path d="M364 340 q266 44 552 0 M364 372 q266 44 552 0 M364 404 q266 44 552 0" fill="none" stroke="#5d6a86" stroke-width="8"/>`+R(600,332,56,72,'#6a6a72')+P('M610 332 q18 -30 36 0','none','stroke="#8a8a94" stroke-width="7"');}
+ if(!F('sPaper')){s+=R(820,150,74,150,'#e4e6ec')+R(828,158,58,134,'none','stroke="#8c2a24" stroke-width="3"')+`<text x="857" y="240" font-size="52" font-family="serif" fill="#7a1f1a" text-anchor="middle">\u6b62</text>`;}
+ else{s+=R(832,296,50,8,'#3a3a42','opacity=".7"');}
+ if(!F('sIron')){s+=R(810,340,96,54,'#5a647e')+R(816,346,84,42,'none','stroke="#39415a" stroke-width="3"')+`<text x="858" y="380" font-size="30" font-family="serif" fill="#16203a" text-anchor="middle">\u5c01</text>`;}
+ else{s+=C(838,366,5,'#0a0e18')+C(878,366,5,'#0a0e18');}
+ if(!F('sName')){s+=R(822,440,70,120,'#d8cfb4')+`<g stroke="#a99" stroke-width="1.4" opacity=".65">${LN(838,470,876,470,'#a99',1.4)+LN(838,492,876,492,'#a99',1.4)+LN(838,514,876,514,'#a99',1.4)}</g>`+`<text x="857" y="486" font-size="15" fill="#8a7a5a" text-anchor="middle">\u540d\u306f\u2026</text>`;}
+ else{s+=`<g stroke="#8a7a5a" stroke-width="2" fill="none" opacity=".8"><path d="M836 470 l10 18 12 -22 10 24 8 -14"/></g>`;}
+ if(F('chainOpen')&&F('sPaper')&&F('sIron')&&F('sName')){s+=P('M628 120 l-14 480 l28 0 z','#efe6c8','opacity=".85" class="pulse"');}
+ s+=foglayer(640,640,320,44);
+ s+=vignette();
+ return s;}
+function hotsGen(){return[
+ HS('gen.chain',380,320,520,110,'hs_chain',!F('chainOpen')),
+ HS('gen.sealp',816,146,82,158,'hs_sealp',!F('sPaper')),
+ HS('gen.seali',806,336,104,62,'hs_seali',!F('sIron')),
+ HS('gen.sealn',818,436,78,128,'hs_sealn',!F('sName')),
+ HS('gen.door',360,110,560,320,'hs_door'),
+ HS('gen.out',0,420,150,240,'hs_genout'),
+];}
+/* ============ scene registry ============ */
+const SCENES={
+ room:{n:'sc_room',art:artRoom,hots:hotsRoom},
+ cor:{n:'sc_cor',art:artCor,hots:hotsCor},
+ bath:{n:'sc_bath',art:artBath,hots:hotsBath},
+ toi:{n:'sc_toi',art:artToi,hots:hotsToi},
+ din:{n:'sc_din',art:artDin,hots:hotsDin},
+ tok:{n:'sc_tok',art:artTok,hots:hotsTok},
+ att:{n:'sc_att',art:artAtt,hots:hotsAtt},
+ gar:{n:'sc_gar',art:artGar,hots:hotsGar},
+ well:{n:'sc_well',art:artWell,hots:hotsWell},
+ sou:{n:'sc_sou',art:artSou,hots:hotsSou},
+ gen:{n:'sc_gen',art:artGen,hots:hotsGen},
+};
+/* ============ msg / dialogue ============ */
+let msgTimer=null;
+function msg(txt){const m=$('msg');m.textContent=txt;m.classList.remove('hidden');if(msgTimer)clearTimeout(msgTimer);msgTimer=setTimeout(()=>m.classList.add('hidden'),4600);}
+function later(k,ms){setTimeout(()=>msg(t(k)),ms);}
+let Q=null,twTimer=null,twN=0,twFull='';
+function say(who,lineKeys,cb){Q={who:who,lines:lineKeys,i:0,cb:cb||null};showLine();$('dlg').classList.remove('hidden');}
+function showLine(){const key=Q.lines[Q.i];twFull=t(key);const d=$('dlg');
+ d.querySelector('.who').textContent=Q.who?t(Q.who):'';
+ d.querySelector('.txt').textContent='';if(twTimer)clearInterval(twTimer);twN=0;
+ twTimer=setInterval(()=>{twN+=2;d.querySelector('.txt').textContent=twFull.slice(0,twN);
+  if(twN>=twFull.length&&twTimer){clearInterval(twTimer);twTimer=null;}},24);}
+function dlgTap(){if(!Q)return;sfx('click');
+ if(twTimer){clearInterval(twTimer);twTimer=null;$('dlg').querySelector('.txt').textContent=twFull;return;}
+ Q.i++;
+ if(Q.i<Q.lines.length){showLine();}
+ else{const cb=Q.cb;Q=null;$('dlg').classList.add('hidden');if(cb)cb();}}
+/* ============ render ============ */
+function shake(){svg.classList.remove('shakew');void svg.getBoundingClientRect();svg.classList.add('shakew');setTimeout(()=>svg.classList.remove('shakew'),1300);}
+function draw(){art.innerHTML=SCENES[cur].art();
+ let hv='';SCENES[cur].hots().forEach(h=>{let glow='';
+  if(h.g&&!F('seen_'+h.id)){setF('seen_'+h.id);glow=`<rect class="pulse" x="${h.x}" y="${h.y}" width="${h.w}" height="${h.h}" rx="6"/>`;}
+  hv+=`<g><rect class="hs" x="${h.x}" y="${h.y}" width="${h.w}" height="${h.h}" data-id="${h.id}" data-l="${h.l}"/>${glow}</g>`;});
+ hots.innerHTML=hv;
+ hots.querySelectorAll('.hs').forEach(r=>{const id=r.getAttribute('data-id'),lk=r.getAttribute('data-l');
+  r.addEventListener('pointerenter',e=>{const tip=$('tip');tip.textContent=t(lk);tip.classList.remove('hidden');moveTip(e);
+   if(e.pointerType==='touch')setTimeout(()=>tip.classList.add('hidden'),1500);});
+  r.addEventListener('pointermove',moveTip);
+  r.addEventListener('pointerleave',()=>$('tip').classList.add('hidden'));
+  r.addEventListener('click',()=>{if(Q)return;$('tip').classList.add('hidden');sfx('click');handle(id);});});
+ $('scname').textContent=t(SCENES[cur].n);renderInv();}
+function moveTip(e){const st=$('stage').getBoundingClientRect();const tip=$('tip');
+ tip.style.left=(e.clientX-st.left)+'px';tip.style.top=(e.clientY-st.top)+'px';}
+/* ============ navigation ============ */
+const ENTER={
+ room:()=>{},
+ cor:()=>msg(t('m_cor1')),
+ bath:()=>msg(t('m_bathent')),
+ toi:()=>{msg(t('m_toienter'));if(!F('knock')&&!F('calm'))setTimeout(()=>{setF('knock');sfx('knock');},1500);},
+ din:()=>msg(t('m_dinent')),
+ tok:()=>msg(t('m_tokenter')),
+ att:()=>msg(t(F('lit')?'m_attenter':'m_attdark')),
+ gar:()=>{msg(t(F('garseen')?'m_garenter2':'m_garenter'));setF('garseen');},
+ well:()=>msg(t('m_wellenter')),
+ sou:()=>msg(t('m_storein')),
+ gen:()=>msg(t('m_genenter')),
+};
+function goto(id){if(!SCENES[id])return;cur=id;setF('v_'+id);if(id==='att')setF('attLight');sfx('door');draw();autosave();const f=ENTER[id];if(f)f();}
+/* ============ items helpers ============ */
+function remInv(it){S.inv=S.inv.filter(x=>x!==it);S.sel=-1;renderInv();}
+function readTanz(key,n){say('',[key],()=>gotTanz(n));}
+/* ============ hotspot actions ============ */
+function handle(id){act(id);draw();renderInv();}
+function act(id){
+ const p=id.split('.');
+ if(id.indexOf('din.p')===0&&id.length<=7){const n=+id.slice(5);if(n>=1&&n<=9&&!F('p'+n)){setF('p'+n);sfx('tick');msg(tf('m_plk',{N:cnt9()}));if(cnt9()>=9){setF('plates9');later('m_pldone',1600);}return;}return;}
+ if(id.indexOf('sou.ab')===0){const map={ab2:0,ab1:1,ab0:2};const rod=id.slice(4,7),side=id.slice(7);
+  const ix=map[rod];if(ix===undefined)return;
+  S.ab[ix]=(side==='R')?(S.ab[ix]+1)%10:(S.ab[ix]+9)%10;sfx('dial');
+  if(S.ab[0]===3&&S.ab[1]===5&&S.ab[2]===8){if(!F('abDone')){setF('abDone');sfx('clank');msg(t('m_abdone'));}}
+  else if(!F('abHint')){setF('abHint');msg(t('m_abhint'));}
+  else msg(t('m_abacus'));return;}
+ if(id.indexOf('tok.d')===0){const di=+id.slice(5);
+  if(F('dolls')){msg(t('m_dolls'));return;}
+  S.fl['d'+di]=(dollDir(di,[1,2,0][di])+1)%3;sfx('tick');
+  if(S.fl.d0===0&&S.fl.d1===1&&S.fl.d2===2){setF('dolls');sfx('clank');msg(t('m_dolls'));}
+  else msg(t('m_dollturn'));return;}
+ switch(id){
+ /* room */
+ case 'room.futon': if(!F('comb')){setF('comb');take('comb');msg(t('m_futon0'));}else msg(t('m_futon1'));break;
+ case 'room.ball': if(!F('zwrA')){setF('zwrA');sfx('laugh');say('d_zwr1',['d_zwr1t']);}
+  else if(F('plates9')&&!F('zwrB')){setF('zwrB');say('d_zwr1',['d_zwr2t']);}
+  else{sfx('laugh');msg(t('m_ball'));}break;
+ case 'room.shelf': msg(t('m_shelf'));break;
+ case 'room.scroll': readTanz('m_scroll',1);break;
+ case 'room.win': msg(t('m_win'));break;
+ case 'room.out': goto('cor');break;
+ /* corridor */
+ case 'cor.room': goto('room');break;
+ case 'cor.bath': goto('bath');break;
+ case 'cor.toi': goto('toi');break;
+ case 'cor.din': goto('din');break;
+ case 'cor.tok': goto('tok');break;
+ case 'cor.gar': goto('gar');break;
+ case 'cor.hatch': goto('att');break;
+ case 'cor.lamp': if(F('lit'))msg(t('m_lamp3'));
+  else if(has('matches')&&has('candle')){setF('lit');setF('lamp');sfx('match');setTimeout(()=>sfx('fire'),300);msg(t('m_litboth'));}
+  else if(has('matches'))msg(t('m_nocandle'));
+  else msg(t('m_lamp0'));break;
+ case 'cor.candle': if(!F('candle')){setF('candle');take('candle');msg(t('m_candle0'));}else msg(t('m_candle1'));break;
+ case 'cor.spider': msg(t('m_spider'));break;
+ case 'cor.sign': msg(t('m_sign'));break;
+ /* vanity */
+ case 'bath.mirror': if(!F('lit'))msg(t('m_needlight'));
+  else if(!F('frost')){setF('frost');sfx('scare');msg(t('b_mirrorB'));}
+  else msg(t('m_mirror3'));break;
+ case 'bath.vanity': if(F('box'))msg(t('m_vanity2'));
+  else if(has('comb')){setF('box');take('hairpin');sfx('unlock');msg(t('m_vanity1'));setTimeout(()=>gotTanz(2),2400);}
+  else msg(t('m_vanity0'));break;
+ case 'bath.salt': if(!F('salt')){setF('salt');take('salt');msg(t('m_salt'));}else msg(t('m_salt0'));break;
+ case 'bath.tub': if(!F('tubseen')){setF('tubseen');msg(t('m_bath'));}else msg(t('m_bath1'));break;
+ case 'bath.drain': msg(t('m_drain'));break;
+ case 'bath.win': if(!F('face1')){setF('face1');sfx('knock');msg(t('m_bwin'));}
+  else if(!F('face2')){setF('face2');sfx('scare');shake();msg(t('m_bface'));}
+  else msg(t('m_bface2'));break;
+ case 'bath.out': goto('cor');break;
+ /* latrine */
+ case 'toi.s1': msg(t('m_s1'));break;
+ case 'toi.s2': if(!F('match')){setF('match');take('matches');msg(t('m_s2'));}else msg(t('m_s2b'));break;
+ case 'toi.s3': if(!F('tz3'))readTanz('m_s3',3);else msg(t('m_tanztaken'));break;
+ case 'toi.knock': if(F('calm')){msg(t('m_knockdone'));break;}
+  if(has('salt')){remInv('salt');setF('calm');sfx('bell');say('d_ghost',['d_g2t','d_g3t']);}
+  else{sfx('knock');msg(t('m_knock'));}break;
+ case 'toi.graff': msg(t('m_graff'));break;
+ case 'toi.win': msg(t('m_twin'));break;
+ case 'toi.out': goto('cor');break;
+ /* parlor */
+ case 'din.clock': if(cnt9()<9)msg(t('m_need9'));
+  else if(!F('clockOpen')){setF('clockOpen');sfx('glass');shake();msg(t('m_clock1'));}
+  else msg(t('m_clock0'));break;
+ case 'din.plate10': setF('plate10');take('plate');sfx('plate');msg(t('m_plate10'));break;
+ case 'din.paper': readTanz('m_table_paper',4);break;
+ case 'din.dish': if(!F('fish')){setF('fish');take('fish');sfx('slide');msg(t('m_dish1'));}else msg(t('m_dish2'));break;
+ case 'din.out': goto('cor');break;
+ /* alcove room */
+ case 'tok.scroll': if(!F('eyesSeen')){setF('eyesSeen');sfx('scare');shake();msg(t('m_ascroll1'));}else msg(t('m_ascroll1'));break;
+ case 'tok.biwa': sfx('biwa');msg(t('m_biwa'));break;
+ case 'tok.alcove': if(!F('dolls')){msg(t('m_alcove0'));break;}
+  if(F('alcove')){msg(t('m_alcove2'));break;}
+  setF('alcove');sfx('slide');if(!has('fish')&&!F('fish'))take('fish');say('',['m_alcove1']);break;
+ case 'tok.win': msg(t('m_tokwin'));break;
+ case 'tok.out': goto('cor');break;
+ /* attic */
+ case 'att.ladder': goto('cor');break;
+ case 'att.trunk': if(F('trunk'))msg(t('m_trunk2'));
+  else if(has('hairpin')){setF('trunk');setF('diary');take('diary');sfx('unlock');msg(t('m_trunk1'));}
+  else msg(t('m_trunk0'));break;
+ case 'att.mirror': if(F('freed')){if(!F('shard')){setF('shard');take('mirror');msg(t('m_shard'));}else msg(t('m_mirroridle'));}
+  else if(S.stare<2){S.stare++;if(S.stare===2){sfx('scare');shake();}msg(t(S.stare===1?'m_mirror1':'m_mirror2'));}
+  else if(has('bell')){setF('freed');S.stare=0;sfx('chime');msg(t('m_mirrorfreed'));}
+  else{S.stare=0;sfx('scare');shake();msg(t('m_mirror2'));}break;
+ case 'att.box': msg(t('m_abox'));break;
+ case 'att.rat': sfx('rat');msg(t('m_arat'));break;
+ /* courtyard */
+ case 'gar.cor': goto('cor');break;
+ case 'gar.pine': msg(t('m_pine'));break;
+ case 'gar.lantern': if(!F('tz5'))readTanz('m_lantern2',5);else msg(t('m_lantern3'));break;
+ case 'gar.tsukubai': msg(t('m_tsukubai'));break;
+ case 'gar.store': if(F('storeOpen'))goto('sou');else{msg(t('m_door0'));openDial();}break;
+ case 'gar.well': goto('well');break;
+ case 'gar.gate': goto('gen');break;
+ case 'gar.cat': if(has('fish')){remInv('fish');setF('catDone');sfx('cat');say('',['m_catfish']);}else msg(t('m_cat'));break;
+ case 'gar.stone': if(!F('stone')){setF('stone');readTanz('m_stone',6);}break;
+ /* well */
+ case 'well.ghost': if(F('wellDone')){msg(t('m_welldone'));break;}
+  if(has('plate')){remInv('plate');setF('turned');sfx('wail');
+   say('d_okiwa',['d_ow1t','d_ow2t','d_ow3t'],()=>{setF('wellDone');take('gatekey');setF('gotKey');msg(t('m_gotkey'));});}
+  else if(!F('wellMet')){setF('wellMet');sfx('tick');say('d_okikucount',['d_oc1','d_oc2','d_oc3','d_oc4'],()=>msg(t('m_ghostback')));}
+  else if(!F('met5')){setF('met5');sfx('wail');say('d_okikucount',['d_oc5t'],()=>msg(t('m_needplate')));}
+  else msg(t('m_needplate'));break;
+ case 'well.bucket': msg(t('m_bucket'));break;
+ case 'well.mouth': msg(t('m_wellmouth'));break;
+ case 'well.out': goto('gar');break;
+ /* storehouse */
+ case 'sou.shelf': msg(t('m_shelf0'));break;
+ case 'sou.paper': if(!F('note1')){setF('note1');say('',['m_note']);}break;
+ case 'sou.bell': if(!F('bell')){setF('bell');take('bell');msg(t('m_shelf1'));}break;
+ case 'sou.kasa': if(!S.kasa){S.kasa=1;sfx('laugh');shake();msg(t('m_kasa0'));}
+  else if(!F('tz7'))readTanz('m_kasa1',7);
+  else msg(t('m_tanztaken'));break;
+ case 'sou.out': goto('gar');break;
+ /* gate */
+ case 'gen.chain': if(F('chainOpen'))msg(t('m_chain2'));
+  else if(has('gatekey')){setF('chainOpen');remInv('gatekey');sfx('unlock');msg(t('m_chain1'));}
+  else msg(t('m_chain0'));break;
+ case 'gen.sealp': if(F('sPaper'))msg(t('m_needall'));
+  else if(F('lit')){setF('sPaper');sfx('fire');msg(t('m_sealp1'));}
+  else msg(t('m_sealp0'));break;
+ case 'gen.seali': if(F('sIron'))msg(t('m_needall'));
+  else if(has('mirror')){remInv('mirror');setF('sIron');sfx('clank');msg(t('m_seali1'));}
+  else msg(t('m_seali0'));break;
+ case 'gen.sealn': if(F('sName'))msg(t('m_needall'));else openNamePrompt();break;
+ case 'gen.door':
+  if(F('chainOpen')&&F('sPaper')&&F('sIron')&&F('sName'))ending();
+  else{sfx('door');if(!F('triedDoor')){setF('triedDoor');msg(t('m_doorlocked'));}else msg(t('m_needall'));}break;
+ case 'gen.out': goto('gar');break;
+ }
+}
+/* ============ dial overlay ============ */
+function openDial(){renderDial();$('dialOv').classList.remove('hidden');}
+function renderDial(){$('dialRow').innerHTML=S.dial.map((v,i)=>`<div class="dial"><button data-d="${i}" data-s="1">▲</button><div class="num">${v}</div><button data-d="${i}" data-s="-1">▼</button></div>`).join('');
+ $('dialRow').querySelectorAll('button').forEach(b=>b.onclick=()=>{const i=+b.getAttribute('data-d'),s=+b.getAttribute('data-s');
+  S.dial[i]=(S.dial[i]+s+10)%10;sfx('dial');renderDial();});}
+/* ============ name prompt ============ */
+let prCb=null;
+function openNamePrompt(){$('prT').textContent=t('m_nameq');$('prSub').textContent=t('m_needname');$('prIn').value='';
+ $('promptOv').classList.remove('hidden');setTimeout(()=>$('prIn').focus(),60);
+ prCb=v=>{if(/oiwa|\u304a\u5ca9|\u304a\u3044\u308f|\u5ca9/i.test(v)){setF('sName');sfx('wail');msg(t('m_sealn1'));autosave();draw();}
+  else if(v){sfx('err');msg(t('m_namefail'));}};}
+/* ============ hints ============ */
+const HINTS={
+ room:[[()=>true,'h_room']],
+ cor:[[()=>true,'h_cor']],
+ bath:[[()=>!F('frost'),'h_bath'],[()=>!F('box'),'h_bath2']],
+ toi:[[()=>!F('calm'),'h_toi'],[()=>!F('match'),'h_toi2']],
+ din:[[()=>cnt9()<9,'h_din'],[()=>cnt9()>=9&&!F('plate10'),'h_din2'],[()=>F('plate10')&&!F('tz4'),'h_din']],
+ tok:[[()=>!F('dolls'),'h_tok']],
+ att:[[()=>!F('lit'),'h_att0'],[()=>F('lit')&&!F('freed'),'h_att'],[()=>F('freed')&&!has('mirror')&&!F('shard'),'h_att']],
+ gar:[[()=>!F('catDone'),'h_gar'],[()=>!F('storeOpen')&&!F('frost'),'h_sou'],[()=>F('gotKey'),'h_gen']],
+ well:[[()=>!F('wellDone'),'h_well']],
+ sou:[[()=>!F('abDone'),'h_sou'],[()=>F('abDone')&&!F('bell'),'h_sou2']],
+ gen:[[()=>!(F('chainOpen')&&F('sPaper')&&F('sIron')&&F('sName')),'h_gen'],[()=>!F('sName')&&!F('trunk'),'h_gen2']],
+};
+function doHint(){const arr=HINTS[cur]||[];
+ for(let i=0;i<arr.length;i++){if(arr[i][0]()&&!F('hi_'+cur+'_'+i)){setF('hi_'+cur+'_'+i);S.hints++;sfx('tick');msg(t(arr[i][1]));save();return;}}
+ msg(t('ui_hintNone'));}
+/* ============ map ============ */
+const MPOS={room:[20,20],att:[20,84],cor:[250,116],bath:[20,320],toi:[170,320],din:[320,320],tok:[470,320],gar:[580,20],well:[580,96],sou:[580,172],gen:[580,248]};
+const MEDG=[['room','cor'],['att','cor'],['cor','bath'],['cor','toi'],['cor','din'],['cor','tok'],['cor','gar'],['gar','well'],['gar','sou'],['gar','gen']];
+function mapSvg(){let s='<svg viewBox="0 0 740 380" style="width:min(92vw,700px)">';
+ MEDG.forEach(e=>{const a=MPOS[e[0]],b=MPOS[e[1]];
+  s+=`<line x1="${a[0]+65}" y1="${a[1]+18}" x2="${b[0]+65}" y2="${b[1]+18}" stroke="#39415f" stroke-width="2"/>`;});
+ Object.keys(MPOS).forEach(id=>{const q=MPOS[id],vis=F('v_'+id);
+  s+=`<g data-mid="${id}" style="cursor:pointer"><rect x="${q[0]}" y="${q[1]}" width="130" height="36" rx="6" fill="${vis?'#243052':'#0e1322'}" stroke="${id===cur?'#e0b64b':(vis?'#5a6a8f':'#262e4a')}" stroke-width="${id===cur?3:1.5}" ${vis?'':'stroke-dasharray="4 4"'}/>`+
+   `<text x="${q[0]+65}" y="${q[1]+23}" font-size="14" fill="${vis?'#efe9d6':'#5a627c'}" text-anchor="middle">${vis?shortLbl(id):'???'}</text></g>`;});
+ s+='</svg>'+`<div class="small" style="margin-top:8px;color:#8f97b0">${t('ui_tanzCnt')}: ${tanzs()}/${TANZ}</div>`;
+ return s;}
+function shortLbl(id){return t('sc_'+id).split('\u2014')[0].trim().split(' \u2014 ')[0].trim();}
+function openMap(){$('mapBox').innerHTML=mapSvg();
+ $('mapBox').querySelectorAll('[data-mid]').forEach(g=>g.onclick=()=>{const id=g.getAttribute('data-mid');
+  if(id!==cur&&F('v_'+id)){$('mapOv').classList.add('hidden');goto(id);}
+  else sfx('err');});
+ $('mapOv').classList.remove('hidden');}
+/* ============ ending ============ */
+function ending(){if(S.cleared&&F('clearedFx'))return;S.cleared=true;setF('clearedFx');save();
+ say('',['d_end1t','d_end2t','d_end3t'],()=>{sfx('rooster');showEnd();});}
+function showEnd(){const n=tanzs();
+ $('endBox').innerHTML=`<div class="card" style="text-align:center;max-width:92%">
+  <svg viewBox="0 0 400 150" style="width:min(80%,430px)">
+   <defs><linearGradient id="dawnG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#141c38"/><stop offset="1" stop-color="#c88a5a"/></linearGradient></defs>
+   <rect width="400" height="150" fill="url(#dawnG)"/>
+   <circle cx="200" cy="148" r="44" fill="#f4e6c8" opacity=".92"/>
+   <path d="M0 112 L55 92 L115 112 L175 88 L245 112 L310 92 L400 114 L400 150 L0 150 Z" fill="#0a0e19"/>
+   <path d="M172 90 L200 74 L228 90 L222 90 L200 80 L178 90 Z" fill="#141a2a"/>
+   <rect x="193" y="92" width="15" height="20" fill="#141a2a"/>
+  </svg>
+  <h2 style="letter-spacing:6px;margin:10px 0 4px">${t('endTitle')}</h2>
+  <p style="margin:6px 0">${t('endLine1')}</p>
+  <p style="font-size:14px;color:#bdb7a2;margin:6px 0">${t('endLine2')}</p>
+  <p style="color:var(--gold);margin:10px 0 2px">${tf('endTanz',{N:n})}${n>=TANZ?'\u2605':''}</p>
+  <p class="small" style="margin:4px 0 14px">${tf('endHintN',{N:S.hints})}</p>
+  <button class="btn gold" id="eAgain">${t('endAgain')}</button>
+  <button class="btn" id="eBack">${t('endBack')}</button></div>`;
+ $('endOv').classList.remove('hidden');
+ $('eAgain').onclick=()=>{$('endOv').classList.add('hidden');startRun();};
+ $('eBack').onclick=()=>{$('endOv').classList.add('hidden');showTitle();};
+ save();}
+/* ============ title / chrome ============ */
+function showTitle(){$('tCont').classList.toggle('hidden',!hasSave());
+ $('tClr').innerHTML=hasSave()?`<button class="btn" id="tErase" style="font-size:13px">${t('ui_erase')}</button>`:'';
+ const e=$('tErase');if(e)e.onclick=()=>{try{localStorage.removeItem(SAVEKEY);}catch(err){}showTitle();};
+ $('titleOv').classList.remove('hidden');}
+function hideOv(id){$(id).classList.add('hidden');}
+function startRun(){hideOv('titleOv');newGame();save();draw();say('',['m_start1','m_start2']);}
+function setLangUI(){$('bLang').textContent=lang==='ja'?'EN':'\u65e5\u672c\u8a9e';
+ $('tLang').textContent=lang==='ja'?'EN':'\u65e5\u672c\u8a9e';
+ $('howP').innerText=t('howP');
+ $('rotMsg').innerText=t('rotMsg');$('rotOk').textContent=t('rotOk');
+ setSoundUI();}
+function toggleLang(){lang=lang==='ja'?'en':'ja';setLangUI();draw();save();}
+function rotCheck(){let dismissed=window.__rotOK||false;
+ $('rotOv').classList.toggle('hidden',!(window.innerWidth<window.innerHeight&&!dismissed));}
+function fitStage(){const w=window.innerWidth,h=window.innerHeight,a=1280/720;
+ let W=Math.min(w,Math.round(h*a)),H=Math.round(W/a);if(H>h){H=h;W=Math.round(H*a);}
+ const st=$('stage');st.style.width=W+'px';st.style.height=H+'px';$('view').style.height=H+'px';}
+/* ============ init ============ */
+let started=false;
+document.addEventListener('pointerdown',()=>{if(started)return;started=true;ensureAC();if(soundOn){startAmb();scheduleCreak();}},{once:true});
+$('dlg').addEventListener('click',dlgTap);
+$('bHint').onclick=doHint;
+$('bMap').onclick=openMap;
+$('mapClose').onclick=()=>hideOv('mapOv');
+$('bSave').onclick=()=>{save();sfx('pick');msg(t('ui_saved'));};
+$('bSnd').onclick=toggleSound;
+$('bLang').onclick=toggleLang;
+$('tStart').onclick=()=>{ensureAC();if(soundOn){startAmb();scheduleCreak();}startRun();};
+$('tCont').onclick=()=>{ensureAC();if(soundOn){startAmb();scheduleCreak();}
+ if(load()){setLangUI();hideOv('titleOv');draw();msg(t('ui_cont1'));}else showTitle();};
+$('tHow').onclick=()=>{setLangUI();$('howOv').classList.remove('hidden');};
+$('howClose').onclick=()=>hideOv('howOv');
+$('tFull').onclick=()=>{try{document.documentElement.requestFullscreen();}catch(e){}};
+$('tSnd').onclick=toggleSound;
+$('tLang').onclick=toggleLang;
+$('dialOk').onclick=()=>{if(S.dial[0]===3&&S.dial[1]===5&&S.dial[2]===8){setF('storeOpen');sfx('unlock');msg(t('m_doorlock'));}
+ else{sfx('err');msg(t('m_doorwrong'));}hideOv('dialOv');draw();autosave();};
+$('dialX').onclick=()=>hideOv('dialOv');
+$('prOk').onclick=()=>{const v=$('prIn').value;$('promptOv').classList.add('hidden');if(prCb)prCb(v);};
+$('prX').onclick=()=>{$('promptOv').classList.add('hidden');};
+$('prIn').addEventListener('keydown',e=>{if(e.key==='Enter')$('prOk').click();});
+$('rotOk').onclick=()=>{window.__rotOK=true;rotCheck();};
+window.addEventListener('resize',()=>{fitStage();rotCheck();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){['howOv','mapOv','dialOv','promptOv'].forEach(id=>hideOv(id));}
+ if(e.key===' '&&Q){e.preventDefault();dlgTap();}});
+try{const raw=localStorage.getItem(SAVEKEY);if(raw){const d=JSON.parse(raw);lang=d.lang||'ja';soundOn=d.soundOn!==false;}}catch(e){}
+fitStage();setLangUI();setSoundUI();draw();showTitle();rotCheck();
+</script>
+</body>
+</html>
